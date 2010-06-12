@@ -1,7 +1,0 @@
-Basic installation instructions for use without Eclipse:
-
-To see the list of options, type "ant" (no quotes) in the command line and hit the enter key.
-
-To run the application on your device, type "ant install" with your device plugged in (and Android SDK/ADB installed)
-
-- Jason
