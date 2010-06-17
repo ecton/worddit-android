@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">WordditHome</string>
+    <string name="worddit_server">http://192.168.1.77:4567</string>
 </resources>
