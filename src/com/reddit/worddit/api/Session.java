@@ -1,4 +1,4 @@
-package com.reddit.worddit;
+package com.reddit.worddit.api;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

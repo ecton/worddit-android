@@ -1,4 +1,4 @@
-package com.reddit.worddit;
+package com.reddit.worddit.api;
 
 /**
  * A class which defines values as constants as defined
