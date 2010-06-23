@@ -1,12 +1,18 @@
 package com.reddit.worddit.api;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class Session {
 	/** The default, official Worddit server */
@@ -106,20 +112,19 @@ public class Session {
 		return false;
 	}
 	
-	public List<Object> getGames() throws IOException {
+	public JsonArray getGames() throws IOException {
 		HttpURLConnection conn = get(Worddit.PATH_USER_GAMES);
 		int response = conn.getResponseCode();
 		if(response != Worddit.SUCCESS) return null;
-		// TODO: JSON stuff here.
-		return new ArrayList<Object>();
+		return readJsonArray(conn);
 	}
 	
-	public List<Object> getFriends() {
+	public JsonArray getFriends() {
 		// TODO: Implement getFriends
 		return null;
 	}
 	
-	public Object findFriend(String id) {
+	public JsonObject findFriend(String id) {
 		// TODO: Implement findFriend
 		return null;
 	}
@@ -139,12 +144,12 @@ public class Session {
 		return false;
 	}
 	
-	public Object newGame(List<String> ids, List<String> rules) {
+	public JsonObject newGame(List<String> ids, List<String> rules) {
 		// TODO: Implement newGame
 		return null;
 	}
 	
-	public Object requestGame(int players, List<String> rules) {
+	public JsonObject requestGame(int players, List<String> rules) {
 		// TODO: Implement requestGame
 		return null;
 	}
@@ -159,27 +164,27 @@ public class Session {
 		return false;
 	}
 	
-	public Object getBoard(String id) {
+	public JsonObject getBoard(String id) {
 		// TODO: Implement getBoard
 		return null;
 	}
 	
-	public List<Object> getRack(String id) {
+	public JsonArray getRack(String id) {
 		// TODO: Implement getRack
 		return null;
 	}
 	
-	public List<Object> getGameHistory(String id, int limit) {
+	public JsonArray getGameHistory(String id, int limit) {
 		// TODO: Implement getGameHistory
 		return null;
 	}
 	
-	public Object play(String id, int row, int column, boolean isVertical, List<Object> tiles) {
+	public JsonObject play(String id, int row, int column, boolean isVertical, List<Object> tiles) {
 		// TODO: Implement play
 		return null;
 	}
 	
-	public Object swap(String id, List<Object> tiles) {
+	public JsonObject swap(String id, List<Object> tiles) {
 		// TODO: Implement swap
 		return null;
 	}
@@ -194,7 +199,7 @@ public class Session {
 		return false;
 	}
 	
-	public List<Object> getChatHistory(String id, int limit) {
+	public JsonArray getChatHistory(String id, int limit) {
 		// TODO: Implement getChatHistory
 		return null;
 	}
@@ -234,6 +239,36 @@ public class Session {
 		HttpURLConnection connection = HttpHelper.makePost(mURL, path, encodedArgs, mCookie);
 		mLastResponse = connection.getResponseCode();
 		return connection;
+	}
+	
+	/**
+	 * Read and return a <code>JsonArray</code> from an open <code>HttpURLConnection</code>.
+	 * Meant as a helper method for repeatable code.
+	 * @param connection to read from
+	 * @return a <code>JsonArray</code> given by the server.
+	 * @throws IOException
+	 */
+	private JsonArray readJsonArray(HttpURLConnection connection)
+	throws IOException {
+		JsonParser parser = new JsonParser();
+		BufferedReader reader =
+			new BufferedReader(new InputStreamReader(connection.getInputStream()));
+		return parser.parse(reader).getAsJsonArray();
+	}
+	
+	/**
+	 * Read and return a <code>JsonObject</code> from an open <code>HttpURLConnection</code>.
+	 * Meant as a helper method for repeatable code.
+	 * @param connection to read from
+	 * @return a <code>JsonArray</code> given by the server.
+	 * @throws IOException
+	 */
+	private JsonObject readJsonObject(HttpURLConnection connection)
+	throws IOException {
+		JsonParser parser = new JsonParser();
+		BufferedReader reader =
+			new BufferedReader(new InputStreamReader(connection.getInputStream()));
+		return parser.parse(reader).getAsJsonObject();
 	}
 	
 	/**
