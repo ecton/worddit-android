@@ -7,12 +7,18 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.reddit.worddit.api.response.Friend;
+import com.reddit.worddit.api.response.Game;
+import com.reddit.worddit.api.response.GameBoard;
+import com.reddit.worddit.api.response.ChatMessage;
+import com.reddit.worddit.api.response.Move;
+import com.reddit.worddit.api.response.Profile;
+import com.reddit.worddit.api.response.Tile;
 
 public class Session {
 	/** The default, official Worddit server */
@@ -112,36 +118,46 @@ public class Session {
 		return false;
 	}
 	
-	public JsonArray getGames() throws IOException {
+	public Game[] getGames() throws IOException {
 		HttpURLConnection conn = get(Worddit.PATH_USER_GAMES);
 		int response = conn.getResponseCode();
 		if(response != Worddit.SUCCESS) return null;
-		return readJsonArray(conn);
+		return castJson(conn,Game[].class);
 	}
 	
-	public JsonArray getFriends() {
-		// TODO: Implement getFriends
-		return null;
+	public Friend[] getFriends() throws IOException {
+		HttpURLConnection conn = get(Worddit.PATH_USER_FRIENDS);
+		int response = conn.getResponseCode();
+		if(response != Worddit.SUCCESS) return null;
+		return castJson(conn,Friend[].class);
 	}
 	
-	public JsonObject findFriend(String id) {
-		// TODO: Implement findFriend
-		return null;
+	public Profile findFriend(String id) throws IOException {
+		HttpURLConnection conn = get(String.format(Worddit.PATH_USER_FIND,id));
+		int response = conn.getResponseCode();
+		if(response != Worddit.SUCCESS) return null;
+		return castJson(conn,Profile.class);
 	}
 	
-	public boolean befriend(String id) {
-		// TODO: Implement befriend
-		return false; // You can't have any friends, silly.
+	public boolean befriend(String id) throws IOException {
+		HttpURLConnection conn = get(String.format(Worddit.PATH_USER_BEFRIEND,id));
+		int response = conn.getResponseCode();
+		if(response != Worddit.SUCCESS) return false;
+		return true;
 	}
 	
-	public boolean defriend(String id) {
-		// TODO: Implement defriend
-		return false;
+	public boolean defriend(String id) throws IOException {
+		HttpURLConnection conn = get(String.format(Worddit.PATH_USER_DEFRIEND,id));
+		int response = conn.getResponseCode();
+		if(response != Worddit.SUCCESS) return false;
+		return true;
 	}
 	
-	public boolean acceptFriend(String id) {
-		// TODO: Implement acceptFriend
-		return false;
+	public boolean acceptFriend(String id) throws IOException {
+		HttpURLConnection conn = get(String.format(Worddit.PATH_USER_ACCEPTFRIEND,id));
+		int response = conn.getResponseCode();
+		if(response != Worddit.SUCCESS) return false;
+		return true;
 	}
 	
 	public JsonObject newGame(List<String> ids, List<String> rules) {
@@ -154,29 +170,39 @@ public class Session {
 		return null;
 	}
 	
-	public boolean acceptGame(String id) {
-		// TODO: Implement acceptGame
-		return false;
+	public boolean acceptGame(String id) throws IOException {
+		HttpURLConnection conn = get(String.format(Worddit.PATH_GAME_ACCEPT,id));
+		int response = conn.getResponseCode();
+		if(response != Worddit.SUCCESS) return false;
+		return true;
 	}
 	
-	public boolean rejectGame(String id) {
-		// TODO: Implement rejectGame
-		return false;
+	public boolean rejectGame(String id) throws IOException {
+		HttpURLConnection conn = get(String.format(Worddit.PATH_GAME_REJECT,id));
+		int response = conn.getResponseCode();
+		if(response != Worddit.SUCCESS) return false;
+		return true;
 	}
 	
-	public JsonObject getBoard(String id) {
-		// TODO: Implement getBoard
-		return null;
+	public GameBoard getBoard(String id) throws IOException {
+		HttpURLConnection conn = get(String.format(Worddit.PATH_GAME_BOARD,id));
+		int response = conn.getResponseCode();
+		if(response != Worddit.SUCCESS) return null;
+		return castJson(conn,GameBoard.class);
 	}
 	
-	public JsonArray getRack(String id) {
-		// TODO: Implement getRack
-		return null;
+	public Tile[] getRack(String id) throws IOException {
+		HttpURLConnection conn = get(String.format(Worddit.PATH_GAME_RACK,id));
+		int response = conn.getResponseCode();
+		if(response != Worddit.SUCCESS) return null;
+		return castJson(conn,Tile[].class);
 	}
 	
-	public JsonArray getGameHistory(String id, int limit) {
-		// TODO: Implement getGameHistory
-		return null;
+	public Move[] getGameHistory(String id, int limit) throws IOException {
+		HttpURLConnection conn = get(String.format(Worddit.PATH_GAME_HISTORY,id,limit));
+		int response = conn.getResponseCode();
+		if(response != Worddit.SUCCESS) return null;
+		return castJson(conn,Move[].class);
 	}
 	
 	public JsonObject play(String id, int row, int column, boolean isVertical, List<Object> tiles) {
@@ -199,9 +225,11 @@ public class Session {
 		return false;
 	}
 	
-	public JsonArray getChatHistory(String id, int limit) {
-		// TODO: Implement getChatHistory
-		return null;
+	public ChatMessage[] getChatHistory(String id, int limit) throws IOException {
+		HttpURLConnection conn = get(String.format(Worddit.PATH_USER_DEFRIEND,id));
+		int response = conn.getResponseCode();
+		if(response != Worddit.SUCCESS) return null;
+		return castJson(conn,ChatMessage[].class);
 	}
 	
 	public boolean sendChatMessage(String id, String message) {
@@ -242,33 +270,21 @@ public class Session {
 	}
 	
 	/**
-	 * Read and return a <code>JsonArray</code> from an open <code>HttpURLConnection</code>.
-	 * Meant as a helper method for repeatable code.
-	 * @param connection to read from
-	 * @return a <code>JsonArray</code> given by the server.
-	 * @throws IOException
+	 * This is a helper function to take an open <code>HttpURLConnection</code>, read the JSON
+	 * payload it contains, and cast it as some object.
+	 * This method also works by magic.
+	 * @param <T> the object type to cast to
+	 * @param connection to read JSON data from
+	 * @param type of the object
+	 * @return JSON cast as the specified object
+	 * @throws IOException if there were connection issues.
 	 */
-	private JsonArray readJsonArray(HttpURLConnection connection)
+	private <T> T castJson(HttpURLConnection connection, Class<T> type)
 	throws IOException {
-		JsonParser parser = new JsonParser();
 		BufferedReader reader =
 			new BufferedReader(new InputStreamReader(connection.getInputStream()));
-		return parser.parse(reader).getAsJsonArray();
-	}
-	
-	/**
-	 * Read and return a <code>JsonObject</code> from an open <code>HttpURLConnection</code>.
-	 * Meant as a helper method for repeatable code.
-	 * @param connection to read from
-	 * @return a <code>JsonArray</code> given by the server.
-	 * @throws IOException
-	 */
-	private JsonObject readJsonObject(HttpURLConnection connection)
-	throws IOException {
-		JsonParser parser = new JsonParser();
-		BufferedReader reader =
-			new BufferedReader(new InputStreamReader(connection.getInputStream()));
-		return parser.parse(reader).getAsJsonObject();
+		Gson gson = new Gson();
+		return gson.fromJson(reader,type);
 	}
 	
 	/**
