@@ -42,6 +42,11 @@ public class Worddit {
 		DEVICE_ID = "device_id",
 		AUTH_COOKIE = "auth";
 	
+	/** Constant values as defined by the server API */
+	public static final String
+		DOWN = "down",
+		RIGHT = "right";
+	
 	/** Constant paths defined by the server API */
 	public static final String
 		PATH_USER_ADD = "/user/add",

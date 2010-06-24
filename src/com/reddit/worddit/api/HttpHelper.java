@@ -29,7 +29,7 @@ public class HttpHelper {
 	 */
 	public static HttpURLConnection makePost(URL baseUrl, String path, String params, String cookie)
 	throws IOException {
-		URL url = new URL(String.format("%s/%s", baseUrl.toString(), path));
+		URL url = new URL(String.format("%s%s", baseUrl.toString(), path));
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		connection.setRequestMethod("POST");
 		connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -65,7 +65,7 @@ public class HttpHelper {
 	 */
 	public static HttpURLConnection makeGet(URL baseUrl, String path, String cookie)
 	throws IOException {
-		URL url = new URL(String.format("%s/%s", baseUrl.toString(), path));
+		URL url = new URL(String.format("%s%s", baseUrl.toString(), path));
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		connection.setRequestMethod("GET");
 		connection.setRequestProperty("Content-Language", "en-US");

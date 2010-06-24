@@ -7,15 +7,15 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.reddit.worddit.api.response.ChatMessage;
 import com.reddit.worddit.api.response.Friend;
 import com.reddit.worddit.api.response.Game;
 import com.reddit.worddit.api.response.GameBoard;
-import com.reddit.worddit.api.response.ChatMessage;
 import com.reddit.worddit.api.response.Move;
 import com.reddit.worddit.api.response.Profile;
 import com.reddit.worddit.api.response.Tile;
@@ -118,6 +118,11 @@ public class Session {
 		return false;
 	}
 	
+	/**
+	 * Retrieve a list of games that are relevant to the player
+	 * @return list of available games
+	 * @throws IOException if there are connection issues
+	 */
 	public Game[] getGames() throws IOException {
 		HttpURLConnection conn = get(Worddit.PATH_USER_GAMES);
 		int response = conn.getResponseCode();
@@ -132,7 +137,7 @@ public class Session {
 		return castJson(conn,Friend[].class);
 	}
 	
-	public Profile findFriend(String id) throws IOException {
+	public Profile findUser(String id) throws IOException {
 		HttpURLConnection conn = get(String.format(Worddit.PATH_USER_FIND,id));
 		int response = conn.getResponseCode();
 		if(response != Worddit.SUCCESS) return null;
@@ -160,14 +165,30 @@ public class Session {
 		return true;
 	}
 	
-	public JsonObject newGame(List<String> ids, List<String> rules) {
-		// TODO: Implement newGame
-		return null;
+	public String newGame(List<String> ids, List<String> rules) throws IOException {
+		return newGame(collapse(ids,','), collapse(rules,','));
 	}
 	
-	public JsonObject requestGame(int players, List<String> rules) {
-		// TODO: Implement requestGame
-		return null;
+	public String newGame(String ids, String rules) throws IOException {
+		HttpURLConnection conn = post(Worddit.PATH_GAME_NEW,
+				Worddit.INVITATIONS, ids,
+				Worddit.RULES, rules);
+		
+		if(conn.getResponseCode() != Worddit.SUCCESS) return null;
+		return castJson(conn, String.class);
+	}
+	
+	public String requestGame(int players, List<String> rules) throws IOException {
+		return requestGame(players,collapse(rules,','));
+	}
+	
+	public String requestGame(int players, String rules) throws IOException {
+		HttpURLConnection conn = post(Worddit.PATH_GAME_REQUEST,
+				Worddit.REQUESTED_PLAYERS, Integer.toString(players),
+				Worddit.RULES, rules);
+		
+		if(conn.getResponseCode() != Worddit.SUCCESS) return null;
+		return castJson(conn, String.class);
 	}
 	
 	public boolean acceptGame(String id) throws IOException {
@@ -205,36 +226,49 @@ public class Session {
 		return castJson(conn,Move[].class);
 	}
 	
-	public JsonObject play(String id, int row, int column, boolean isVertical, List<Object> tiles) {
-		// TODO: Implement play
-		return null;
+	public Move play(String id, int row, int column, boolean isVertical, String tiles)
+	throws IOException {
+		String path = String.format(Worddit.PATH_GAME_PLAY, id);
+		HttpURLConnection conn = post(path,
+				Worddit.ROW, Integer.toString(row),
+				Worddit.COLUMN, Integer.toString(column),
+				Worddit.DIRECTION, (isVertical) ? Worddit.DOWN : Worddit.RIGHT,
+				Worddit.TILES, tiles);
+		
+		if(getLastResponse() != Worddit.SUCCESS) return null;
+		return castJson(conn, Move.class);
 	}
 	
-	public JsonObject swap(String id, List<Object> tiles) {
-		// TODO: Implement swap
-		return null;
+	public Tile[] swap(String id, String tiles) throws IOException {
+		String path = String.format(Worddit.PATH_GAME_SWAP, id);
+		HttpURLConnection conn = post(path, Worddit.TILES, tiles);
+		if(getLastResponse() != Worddit.SUCCESS) return null;
+		return castJson(conn, Tile[].class);	}
+	
+	public boolean pass(String id) throws IOException {
+		post(String.format(Worddit.PATH_GAME_PASS, id));
+		if(getLastResponse() != Worddit.SUCCESS) return false;
+		return true;
 	}
 	
-	public boolean pass(String id) {
-		// TODO: Implement pass
-		return false;
-	}
-	
-	public boolean resign(String id) {
-		// TODO: Implement resign
-		return false;
+	public boolean resign(String id) throws IOException {
+		post(String.format(Worddit.PATH_GAME_RESIGN, id));
+		if(getLastResponse() != Worddit.SUCCESS) return false;
+		return true;
 	}
 	
 	public ChatMessage[] getChatHistory(String id, int limit) throws IOException {
-		HttpURLConnection conn = get(String.format(Worddit.PATH_USER_DEFRIEND,id));
+		HttpURLConnection conn = get(String.format(Worddit.PATH_GAME_CHATHISTORY,id));
 		int response = conn.getResponseCode();
 		if(response != Worddit.SUCCESS) return null;
 		return castJson(conn,ChatMessage[].class);
 	}
 	
-	public boolean sendChatMessage(String id, String message) {
-		// TODO: Implement sendChatMessage
-		return false;
+	public boolean sendChatMessage(String id, String message) throws IOException {
+		String path = String.format(Worddit.PATH_GAME_CHATSEND, id);
+		HttpURLConnection conn = post(path, Worddit.MESSAGE, message);
+		if(getLastResponse() != Worddit.SUCCESS) return false;
+		return true;
 	}
 	
 	/**
@@ -285,6 +319,27 @@ public class Session {
 			new BufferedReader(new InputStreamReader(connection.getInputStream()));
 		Gson gson = new Gson();
 		return gson.fromJson(reader,type);
+	}
+	
+	private String collapse(List<String> strings, char delimeter) {
+		StringBuffer output = new StringBuffer();
+		for(Iterator<String> it = strings.iterator(); it.hasNext(); ) {
+			String id = it.next();
+			output.append(id);
+			// Add a comma if needed
+			if(it.hasNext()) output.append(delimeter);
+		}
+		return output.toString();
+	}
+	
+	private <T> String collapse(T array[], char delimeter) {
+		StringBuffer output = new StringBuffer();
+		for(int i = 0; i < array.length; i++) {
+			T bit = array[i];
+			output.append(bit);
+			if(i < array.length - 1) output.append(',');
+		}
+		return output.toString();
 	}
 	
 	/**
