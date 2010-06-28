@@ -16,7 +16,7 @@ public class Game {
 	public String current_player;
 	
 	/** Players for this game in order of rotation. */
-	public String players[];
+	public Player players[];
 	
 	/** Date of last move in UTC. */
 	public String last_move_utc;
@@ -53,10 +53,29 @@ public class Game {
 		return status.equalsIgnoreCase(STATUS_WAITING);
 	}
 	
+	/**
+	 * A holder class to represent a player in a game.
+	 * @author pkilgo
+	 *
+	 */
+	public class Player {
+		public Player() { }
+		
+		/** Player ID */
+		public String id;
+		
+		/** Player's score */
+		public String score;
+	}
+	
 	/** Constant values for the 'status' field. */
 	public static final String
 		STATUS_INVITED = "invited",
 		STATUS_ACCEPTED = "accepted",
 		STATUS_ACTIVE = "active",
 		STATUS_WAITING = "waiting";
+	
+	public static void main(String [] args) {
+		
+	}
 }
