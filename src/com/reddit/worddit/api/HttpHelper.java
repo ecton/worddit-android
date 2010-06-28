@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import android.util.Log;
+
 /**
  * A class meant to help out on some of the more verbose
  * stuff when dealing with low-level HTTP connections.
@@ -17,6 +19,8 @@ import java.util.Map;
  *
  */
 public class HttpHelper {
+	public static final String TAG = HttpHelper.class.getSimpleName();
+	
 	/**
 	 * Create an <code>HttpURLConnection</code> object and make it post
 	 * its parameters to the Worddit server.
@@ -117,9 +121,17 @@ public class HttpHelper {
 	 */
 	public static String readCookie(HttpURLConnection connection, String name) {
 		Map<String,List<String>> headers = connection.getHeaderFields();
-		List<String> values = headers.get("Set-Cookie");
+		List<String> values = null;
+		
+		for(int i = 1; i <= headers.size(); i++) {
+			String headerName = connection.getHeaderFieldKey(i);
+			if(headerName.equalsIgnoreCase("Set-Cookie")) {
+				values = headers.get(headerName);
+			}
+		}
+		
 		if(values == null) {
-			System.err.println("Warning: no cookies provided");
+			Log.w(TAG, "Warning: no cookies provided");
 			return null;
 		}
 		
@@ -132,7 +144,7 @@ public class HttpHelper {
 		String fullCookie = buf.toString();
 		int i = fullCookie.indexOf(name);
 		if(i < 0) {
-			System.err.printf("Warning: cookie '%s' not found\n", name);
+			Log.w(TAG, String.format("Warning: cookie '%s' not found\n", name));
 			return null;
 		}
 		i += name.length();

@@ -9,7 +9,7 @@ package com.reddit.worddit.api;
 public class Worddit {
 	/** Constants for response codes returned by the Worddit server. */
 	public static final int
-		USER_CREATED = 201,
+		SUCCESS_CREATED = 201,
 		USER_EXISTS = 409,
 		SUCCESS = 200,
 		SUCCESS_NOT_VERIFIED = 202,

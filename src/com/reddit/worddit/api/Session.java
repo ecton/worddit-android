@@ -66,11 +66,11 @@ public class Session {
 				Worddit.DEVICE_ID, mDeviceId);
 		
 		int response = connection.getResponseCode();
-		if( response != Worddit.USER_CREATED ) return false;
+		if( response != Worddit.SUCCESS_CREATED ) return false;
 		
 		// Server should have returned an auth cookie.
-		mCookie = String.format("%s=%s",
-				Worddit.AUTH_COOKIE, HttpHelper.readCookie(connection, Worddit.AUTH_COOKIE));
+		String value = HttpHelper.readCookie(connection, Worddit.AUTH_COOKIE);
+		mCookie = (value != null) ? String.format("%s=%s", Worddit.AUTH_COOKIE, value) : null;
 		
 		return true;
 	}
@@ -87,8 +87,8 @@ public class Session {
 		if( response != Worddit.SUCCESS && response != Worddit.SUCCESS_NOT_VERIFIED ) return false;
 
 		// Server should have returned an auth cookie.
-		mCookie = String.format("%s=%s",
-				Worddit.AUTH_COOKIE, HttpHelper.readCookie(connection, Worddit.AUTH_COOKIE));
+		String value = HttpHelper.readCookie(connection, Worddit.AUTH_COOKIE);
+		mCookie = (value != null) ? String.format("%s=%s", Worddit.AUTH_COOKIE, value) : null;
 		
 		return true;
 	}
@@ -174,7 +174,7 @@ public class Session {
 				Worddit.INVITATIONS, ids,
 				Worddit.RULES, rules);
 		
-		if(conn.getResponseCode() != Worddit.SUCCESS) return null;
+		if(conn.getResponseCode() != Worddit.SUCCESS_CREATED) return null;
 		return castJson(conn, String.class);
 	}
 	
@@ -286,6 +286,14 @@ public class Session {
 	 */
 	public boolean isAuthenticated() {
 		return mCookie != null && mCookie.length() > 0;
+	}
+	
+	/**
+	 * Get the authentication cookie.
+	 * @return cookie we're currently using, or null if there is none
+	 */
+	public String getCookie() {
+		return mCookie;
 	}
 	
 	/**
