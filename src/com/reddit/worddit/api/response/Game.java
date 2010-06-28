@@ -58,7 +58,7 @@ public class Game {
 	 * @author pkilgo
 	 *
 	 */
-	public class Player {
+	public static class Player {
 		public Player() { }
 		
 		/** Player ID */
