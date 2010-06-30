@@ -10,6 +10,8 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.reddit.worddit.api.response.ChatMessage;
@@ -21,6 +23,9 @@ import com.reddit.worddit.api.response.Profile;
 import com.reddit.worddit.api.response.Tile;
 
 public class Session {
+	/** Debug tag */
+	public static final String TAG = "Session";
+	
 	/** The default, official Worddit server */
 	public static final String API_URL = "http://api.dev.worddit.org";
 	
@@ -305,6 +310,7 @@ public class Session {
 	 */
 	private HttpURLConnection post(String path, String ... params)
 	throws IOException {
+		Log.i(TAG, "POST " + path);
 		String encodedArgs = HttpHelper.encodeParams(params);
 		HttpURLConnection connection = HttpHelper.makePost(mURL, path, encodedArgs, mCookie);
 		mLastResponse = connection.getResponseCode();
@@ -358,6 +364,7 @@ public class Session {
 	 */
 	private HttpURLConnection get(String path) throws IOException {
 		HttpURLConnection connection = HttpHelper.makeGet(mURL, path, mCookie);
+		Log.i(TAG, "GET " + path);
 		mLastResponse = connection.getResponseCode();
 		return connection;
 	}
