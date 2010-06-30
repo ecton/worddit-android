@@ -10,7 +10,7 @@ public class WordditHome extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
+		setContentView(R.layout.activity_login);
 
 		// allow global access to application context for pulling strings and
 		// resources

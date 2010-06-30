@@ -73,7 +73,8 @@ public class Game {
 		STATUS_INVITED = "invited",
 		STATUS_ACCEPTED = "accepted",
 		STATUS_ACTIVE = "active",
-		STATUS_WAITING = "waiting";
+		STATUS_WAITING = "waiting",
+		STATUS_PLAYING = "playing";
 	
 	public static void main(String [] args) {
 		
