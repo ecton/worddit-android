@@ -7,51 +7,47 @@ import android.os.AsyncTask;
 
 public class APICall extends AsyncTask<String,String,Boolean>{
 	private Session mSession;
+	private int mCall;
 	private Object mPayload;
 	
-	public APICall(Session s) {
+	public APICall(Session s, int call) {
 		mSession = s;
+		mCall = call;
 	}
 	
 	@Override
 	protected Boolean doInBackground(String... args) {
-		if(args == null || args.length == 0) {
-			throw new IllegalArgumentException("Require >= 1 argument");
-		}
-		
-		int call = Integer.parseInt(args[0]);
-		
-		switch(call) {
+		switch(mCall) {
 			default:
-				throw new IllegalArgumentException("Invalid API call: " + call);
+				throw new IllegalArgumentException("Invalid API call: " + mCall);
 		}
 	}
 	
 	
 	private boolean doAdd(String args[]) throws IOException {
-		if(args.length != 3) {
+		if(args.length != 2) {
 			throw new IllegalArgumentException("Requires [email] [password]");
 		}
 		
-		String email = args[1], password = args[2];
+		String email = args[0], password = args[1];
 		return mSession.createAccount(email, password);
 	}
 	
 	private boolean doLogin(String args[]) throws IOException {
-		if(args.length != 3) {
+		if(args.length != 2) {
 			throw new IllegalArgumentException("Requires [email] [password]");
 		}
 		
-		String email = args[1], password = args[2];
+		String email = args[0], password = args[1];
 		return mSession.login(email, password);
 	}
 	
 	private boolean doSetProfile(String args[]) throws IOException {
-		if(args.length != 4) {
+		if(args.length != 3) {
 			throw new IllegalArgumentException("Requires [email] [password] [nickname]");
 		}
 		
-		String email = args[1], newPassword = args[2], nickname = args[3];
+		String email = args[0], newPassword = args[1], nickname = args[2];
 		return mSession.setProfile(email, newPassword, nickname);
 	}
 	
@@ -69,94 +65,94 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 	}
 	
 	private boolean doFindUser(String args[]) throws IOException {
-		if(args.length != 2) {
+		if(args.length != 1) {
 			throw new IllegalArgumentException("Requires [id_or_email]");
 		}
 		
-		String id = args[1];
+		String id = args[0];
 		return (mPayload = mSession.findUser(id)) != null;
 	}
 	
 	private boolean doBefriend(String args[]) throws IOException {
-		if(args.length != 2) {
+		if(args.length != 1) {
 			throw new IllegalArgumentException("Requires [id]");
 		}
 		
-		String id = args[1];
+		String id = args[0];
 		return mSession.befriend(id);
 	}
 	
 	private boolean doDefriend(String args[]) throws IOException {
-		if(args.length != 2) {
+		if(args.length != 1) {
 			throw new IllegalArgumentException("Requires [id]");
 		}
 		
-		String id = args[1];
+		String id = args[0];
 		return mSession.defriend(id);
 	}
 	
 	private boolean doAcceptFriend(String args[]) throws IOException {
-		if(args.length != 2) {
+		if(args.length != 1) {
 			throw new IllegalArgumentException("Requires [id]");
 		}
 		
-		String id = args[1];
+		String id = args[0];
 		return mSession.acceptFriend(id);
 	}
 	
 	private boolean doNewGame(String args[]) throws IOException {
-		if(args.length != 3) {
+		if(args.length != 2) {
 			throw new IllegalArgumentException("Requires [ids] [rules]");
 		}
 		
-		String ids = args[1], rules = args[2];
+		String ids = args[0], rules = args[1];
 		return (mPayload = mSession.newGame(ids, rules)) != null;
 	}
 	
 	private boolean doRequestGame(String args[]) throws IOException {
-		if(args.length != 3) {
+		if(args.length != 2) {
 			throw new IllegalArgumentException("Requires [email] [password]");
 		}
 		
-		int players = Integer.parseInt(args[1]);
-		String rules = args[2];
+		int players = Integer.parseInt(args[0]);
+		String rules = args[1];
 		
 		return (mPayload = mSession.requestGame(players, rules)) != null;
 	}
 	
 	private boolean doAcceptGame(String args[]) throws IOException {
-		if(args.length != 2) {
+		if(args.length != 1) {
 			throw new IllegalArgumentException("Requires [id]");
 		}
 		
-		String id = args[1];
+		String id = args[0];
 		return mSession.acceptGame(id);
 	}
 	
 	private boolean doRejectGame(String args[]) throws IOException {
-		if(args.length != 2) {
+		if(args.length != 1) {
 			throw new IllegalArgumentException("Requires [id]");
 		}
 		
-		String id = args[1];
+		String id = args[0];
 		return mSession.rejectGame(id);
 	}
 	
 	private boolean doGetBoard(String args[]) throws IOException {
-		if(args.length != 2) {
+		if(args.length != 1) {
 			throw new IllegalArgumentException("Requires [id]");
 		}
 		
-		String id = args[1];
+		String id = args[0];
 		return (mPayload = mSession.getBoard(id)) != null;
 	}
 	
 	private boolean doGetRack(String args[]) throws IOException {
-		if(args.length != 2) {
+		if(args.length != 1) {
 			throw new IllegalArgumentException("Requires [id]");
 		}
 		
-		String id = args[1];
+		String id = args[0];
 		return (mPayload = mSession.getRack(id)) != null;
 	}
 	
@@ -165,18 +161,18 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 			throw new IllegalArgumentException("Requires [id] [limit]");
 		}
 		
-		String id = args[1];
-		int limit = Integer.parseInt(args[2]);
+		String id = args[0];
+		int limit = Integer.parseInt(args[1]);
 		return (mPayload = mSession.getGameHistory(id, limit)) != null;
 	}
 	
 	private boolean doPlay(String args[]) throws IOException {
-		if(args.length != 6) {
+		if(args.length != 5) {
 			throw new IllegalArgumentException("Requires [id] [row] [col] [vertical|horizontal] [tiles]");
 		}
 		
-		int row = Integer.parseInt(args[2]), col = Integer.parseInt(args[3]);
-		String id = args[1], dir = args[4], tiles = args[5];
+		int row = Integer.parseInt(args[1]), col = Integer.parseInt(args[2]);
+		String id = args[0], dir = args[3], tiles = args[4];
 		
 		
 		return (mPayload = mSession.play(id,row,col,dir,tiles)) != null;
