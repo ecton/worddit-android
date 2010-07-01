@@ -15,11 +15,45 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 		mCall = call;
 	}
 	
+	public Object getPayload() {
+		return mPayload;
+	}
+	
 	@Override
 	protected Boolean doInBackground(String... args) {
-		switch(mCall) {
-			default:
-				throw new IllegalArgumentException("Invalid API call: " + mCall);
+		try {
+			switch(mCall) {
+			case USER_ADD: return doAdd(args);
+			case USER_LOGIN: return doLogin(args);
+			case USER_SETPROFILE: return doSetProfile(args);
+			case USER_SETAVATAR: return doSetAvatar(args);
+			case USER_GAMES: return doGetGames();
+			case USER_FRIENDS: return doGetFriends();
+			case USER_FIND: return doFindUser(args);
+			case USER_BEFRIEND: return doBefriend(args);
+			case USER_DEFRIEND: return doDefriend(args);
+			case USER_ACCEPTFRIEND: return doAcceptFriend(args);
+			case GAME_NEW: return doNewGame(args);
+			case GAME_REQUEST: return doRequestGame(args);
+			case GAME_ACCEPT: return doAcceptGame(args);
+			case GAME_REJECT: return doRejectGame(args);
+			case GAME_BOARD: return doGetBoard(args);
+			case GAME_RACK: return doGetRack(args);
+			case GAME_HISTORY: return doGetGameHistory(args);
+			case GAME_PLAY: return doPlay(args);
+			case GAME_SWAP: return doSwap(args);
+			case GAME_PASS: return doPass(args);
+			case GAME_RESIGN: return doResign(args);
+			case GAME_CHATHISTORY: return doChatHistory(args);
+			case GAME_CHATSEND: return doChatSend(args);
+			default: break;
+			}
+			
+			throw new IllegalArgumentException("Invalid API call: " + mCall);
+		}
+		catch(IOException e) {
+			// TODO: Find out what to do here.
+			return false;
 		}
 	}
 	
