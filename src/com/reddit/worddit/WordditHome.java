@@ -9,11 +9,14 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
 public class WordditHome extends Activity {
 	public static final String TAG = "WordditHome";
+	private Button loginBtn;
+	private CheckBox newChkBox;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -21,6 +24,26 @@ public class WordditHome extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 		setup();
+		
+		loginBtn = (Button) findViewById(R.id.login_button_login);
+		loginBtn.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				doLogin(v);
+				
+			}
+			
+			
+		});
+		
+		newChkBox = (CheckBox) findViewById(R.id.login_check_new);
+		newChkBox.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View v) {
+				doCreate(v);
+			}
+		});
 	}
 	
 	public Dialog onCreateDialog(int id) {
