@@ -216,12 +216,16 @@ public class Session {
 		return castJson(conn,Move[].class);
 	}
 	
-	public Move play(String id, int row, int column, boolean isVertical, String tiles)
+	public Move play(String id, int row, int column, String dir, String tiles)
 	throws IOException {
+		if(dir.equalsIgnoreCase(Worddit.DOWN) == false
+				&& dir.equalsIgnoreCase(Worddit.RIGHT) == false) {
+			throw new IllegalArgumentException("Invalid direction: " + dir);
+		}
 		HttpURLConnection conn = post(String.format(Worddit.PATH_GAME_PLAY, id),
 				Worddit.ROW, Integer.toString(row),
 				Worddit.COLUMN, Integer.toString(column),
-				Worddit.DIRECTION, (isVertical) ? Worddit.DOWN : Worddit.RIGHT,
+				Worddit.DIRECTION, dir.toLowerCase(),
 				Worddit.TILES, tiles);
 		
 		if(getLastResponse() != Worddit.SUCCESS) return null;
