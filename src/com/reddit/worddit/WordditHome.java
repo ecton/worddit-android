@@ -22,21 +22,6 @@ public class WordditHome extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 		setup();
-		
-		findViewById(R.id.login_button_login)
-			.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				doButtonClick(v);
-			}
-		});
-		
-		findViewById(R.id.login_check_new)
-			.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				doNewChecked(v);
-			}
-		});
 	}
 	
 	public Dialog onCreateDialog(int id) {
@@ -59,6 +44,25 @@ public class WordditHome extends Activity {
 	private void setup() {
 		// Force confirm password field to reflect default state of checkbox
 		doNewChecked(null);
+		
+		// Setup listeners
+		setupListeners();
+	}
+	
+	private void setupListeners() {
+		findViewById(R.id.login_button_login)
+			.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				doButtonClick(v);
+			}
+		});
+		
+		findViewById(R.id.login_check_new)
+			.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				doNewChecked(v);
+			}
+		});
 	}
 	
 	public void doNewChecked(View v) {
