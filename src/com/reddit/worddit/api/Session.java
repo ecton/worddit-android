@@ -13,7 +13,6 @@ import java.util.List;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.reddit.worddit.api.response.ChatMessage;
 import com.reddit.worddit.api.response.Friend;
 import com.reddit.worddit.api.response.Game;
@@ -70,8 +69,7 @@ public class Session {
 				Worddit.CLIENT_TYPE, mClientType,
 				Worddit.DEVICE_ID, mDeviceId);
 		
-		int response = connection.getResponseCode();
-		if( response != Worddit.SUCCESS_CREATED ) return false;
+		if( getLastResponse() != Worddit.SUCCESS_CREATED ) return false;
 		
 		// Server should have returned an auth cookie.
 		String value = HttpHelper.readCookie(connection, Worddit.AUTH_COOKIE);
@@ -88,8 +86,7 @@ public class Session {
 				Worddit.CLIENT_TYPE, mClientType,
 				Worddit.DEVICE_ID, mDeviceId);
 		
-		int response = connection.getResponseCode();
-		if( response != Worddit.SUCCESS && response != Worddit.SUCCESS_NOT_VERIFIED ) return false;
+		if( getLastResponse() != Worddit.SUCCESS && getLastResponse() != Worddit.SUCCESS_NOT_VERIFIED ) return false;
 
 		// Server should have returned an auth cookie.
 		String value = HttpHelper.readCookie(connection, Worddit.AUTH_COOKIE);
@@ -107,14 +104,13 @@ public class Session {
 	 * @throws IOException If there was trouble doing so.
 	 */
 	public boolean setProfile(String email, String newPassword, String nickname) throws IOException {
-		HttpURLConnection connection = post(
+		post(
 				Worddit.PATH_USER_SETPROFILE,
 				Worddit.EMAIL, email,
 				Worddit.NEW_PASSWORD, newPassword,
 				Worddit.NICKNAME, nickname);
 		
-		int response = connection.getResponseCode();
-		if(response != Worddit.SUCCESS) return false;
+		if(getLastResponse() != Worddit.SUCCESS) return false;
 		return true;
 	}
 	
@@ -130,43 +126,37 @@ public class Session {
 	 */
 	public Game[] getGames() throws IOException {
 		HttpURLConnection conn = get(Worddit.PATH_USER_GAMES);
-		int response = conn.getResponseCode();
-		if(response != Worddit.SUCCESS) return null;
+		if(getLastResponse() != Worddit.SUCCESS) return null;
 		return castJson(conn,Game[].class);
 	}
 	
 	public Friend[] getFriends() throws IOException {
 		HttpURLConnection conn = get(Worddit.PATH_USER_FRIENDS);
-		int response = conn.getResponseCode();
-		if(response != Worddit.SUCCESS) return null;
+		if(getLastResponse() != Worddit.SUCCESS) return null;
 		return castJson(conn,Friend[].class);
 	}
 	
 	public Profile findUser(String id) throws IOException {
 		HttpURLConnection conn = get(String.format(Worddit.PATH_USER_FIND,id));
-		int response = conn.getResponseCode();
-		if(response != Worddit.SUCCESS) return null;
+		if(getLastResponse() != Worddit.SUCCESS) return null;
 		return castJson(conn,Profile.class);
 	}
 	
 	public boolean befriend(String id) throws IOException {
-		HttpURLConnection conn = get(String.format(Worddit.PATH_USER_BEFRIEND,id));
-		int response = conn.getResponseCode();
-		if(response != Worddit.SUCCESS) return false;
+		get(String.format(Worddit.PATH_USER_BEFRIEND,id));
+		if(getLastResponse() != Worddit.SUCCESS) return false;
 		return true;
 	}
 	
 	public boolean defriend(String id) throws IOException {
-		HttpURLConnection conn = get(String.format(Worddit.PATH_USER_DEFRIEND,id));
-		int response = conn.getResponseCode();
-		if(response != Worddit.SUCCESS) return false;
+		get(String.format(Worddit.PATH_USER_DEFRIEND,id));
+		if(getLastResponse() != Worddit.SUCCESS) return false;
 		return true;
 	}
 	
 	public boolean acceptFriend(String id) throws IOException {
-		HttpURLConnection conn = get(String.format(Worddit.PATH_USER_ACCEPTFRIEND,id));
-		int response = conn.getResponseCode();
-		if(response != Worddit.SUCCESS) return false;
+		get(String.format(Worddit.PATH_USER_ACCEPTFRIEND,id));
+		if(getLastResponse() != Worddit.SUCCESS) return false;
 		return true;
 	}
 	
@@ -179,7 +169,7 @@ public class Session {
 				Worddit.INVITATIONS, ids,
 				Worddit.RULES, rules);
 		
-		if(conn.getResponseCode() != Worddit.SUCCESS_CREATED) return null;
+		if(getLastResponse() != Worddit.SUCCESS_CREATED) return null;
 		return castJson(conn, String.class);
 	}
 	
@@ -192,49 +182,43 @@ public class Session {
 				Worddit.REQUESTED_PLAYERS, Integer.toString(players),
 				Worddit.RULES, rules);
 		
-		if(conn.getResponseCode() != Worddit.SUCCESS) return null;
+		if(getLastResponse() != Worddit.SUCCESS) return null;
 		return castJson(conn, String.class);
 	}
 	
 	public boolean acceptGame(String id) throws IOException {
-		HttpURLConnection conn = get(String.format(Worddit.PATH_GAME_ACCEPT,id));
-		int response = conn.getResponseCode();
-		if(response != Worddit.SUCCESS) return false;
+		get(String.format(Worddit.PATH_GAME_ACCEPT,id));
+		if(getLastResponse() != Worddit.SUCCESS) return false;
 		return true;
 	}
 	
 	public boolean rejectGame(String id) throws IOException {
-		HttpURLConnection conn = get(String.format(Worddit.PATH_GAME_REJECT,id));
-		int response = conn.getResponseCode();
-		if(response != Worddit.SUCCESS) return false;
+		get(String.format(Worddit.PATH_GAME_REJECT,id));
+		if(getLastResponse() != Worddit.SUCCESS) return false;
 		return true;
 	}
 	
 	public GameBoard getBoard(String id) throws IOException {
 		HttpURLConnection conn = get(String.format(Worddit.PATH_GAME_BOARD,id));
-		int response = conn.getResponseCode();
-		if(response != Worddit.SUCCESS) return null;
+		if(getLastResponse() != Worddit.SUCCESS) return null;
 		return castJson(conn,GameBoard.class);
 	}
 	
 	public Tile[] getRack(String id) throws IOException {
 		HttpURLConnection conn = get(String.format(Worddit.PATH_GAME_RACK,id));
-		int response = conn.getResponseCode();
-		if(response != Worddit.SUCCESS) return null;
+		if(getLastResponse() != Worddit.SUCCESS) return null;
 		return castJson(conn,Tile[].class);
 	}
 	
 	public Move[] getGameHistory(String id, int limit) throws IOException {
 		HttpURLConnection conn = get(String.format(Worddit.PATH_GAME_HISTORY,id,limit));
-		int response = conn.getResponseCode();
-		if(response != Worddit.SUCCESS) return null;
+		if(getLastResponse() != Worddit.SUCCESS) return null;
 		return castJson(conn,Move[].class);
 	}
 	
 	public Move play(String id, int row, int column, boolean isVertical, String tiles)
 	throws IOException {
-		String path = String.format(Worddit.PATH_GAME_PLAY, id);
-		HttpURLConnection conn = post(path,
+		HttpURLConnection conn = post(String.format(Worddit.PATH_GAME_PLAY, id),
 				Worddit.ROW, Integer.toString(row),
 				Worddit.COLUMN, Integer.toString(column),
 				Worddit.DIRECTION, (isVertical) ? Worddit.DOWN : Worddit.RIGHT,
@@ -245,8 +229,7 @@ public class Session {
 	}
 	
 	public Tile[] swap(String id, String tiles) throws IOException {
-		String path = String.format(Worddit.PATH_GAME_SWAP, id);
-		HttpURLConnection conn = post(path, Worddit.TILES, tiles);
+		HttpURLConnection conn = post(String.format(Worddit.PATH_GAME_SWAP, id), Worddit.TILES, tiles);
 		if(getLastResponse() != Worddit.SUCCESS) return null;
 		return castJson(conn, Tile[].class);	}
 	
@@ -264,14 +247,12 @@ public class Session {
 	
 	public ChatMessage[] getChatHistory(String id, int limit) throws IOException {
 		HttpURLConnection conn = get(String.format(Worddit.PATH_GAME_CHATHISTORY,id));
-		int response = conn.getResponseCode();
-		if(response != Worddit.SUCCESS) return null;
-		return castJson(conn,ChatMessage[].class);
+		if(getLastResponse() != Worddit.SUCCESS) return null;
+		return castJson(conn, ChatMessage[].class);
 	}
 	
 	public boolean sendChatMessage(String id, String message) throws IOException {
-		String path = String.format(Worddit.PATH_GAME_CHATSEND, id);
-		HttpURLConnection conn = post(path, Worddit.MESSAGE, message);
+		post(String.format(Worddit.PATH_GAME_CHATSEND, id), Worddit.MESSAGE, message);
 		if(getLastResponse() != Worddit.SUCCESS) return false;
 		return true;
 	}

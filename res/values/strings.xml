@@ -4,7 +4,7 @@
     <string name="worddit_server">http://192.168.1.77:4567</string>
 
 	<string name="label_login">Login</string>
-	<string name="label_create">I'm new</string>
+	<string name="label_create">I\'m new</string>
 	<string name="label_ok">OK</string>
 	
     <string name="hint_email">Email</string> 
