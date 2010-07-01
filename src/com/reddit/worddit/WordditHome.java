@@ -15,8 +15,6 @@ import android.widget.EditText;
 
 public class WordditHome extends Activity {
 	public static final String TAG = "WordditHome";
-	private Button loginBtn;
-	private CheckBox newChkBox;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -25,23 +23,18 @@ public class WordditHome extends Activity {
 		setContentView(R.layout.activity_login);
 		setup();
 		
-		loginBtn = (Button) findViewById(R.id.login_button_login);
-		loginBtn.setOnClickListener(new View.OnClickListener() {
-			
+		findViewById(R.id.login_button_login)
+			.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				doLogin(v);
-				
+				doButtonClick(v);
 			}
-			
-			
 		});
 		
-		newChkBox = (CheckBox) findViewById(R.id.login_check_new);
-		newChkBox.setOnClickListener(new View.OnClickListener() {
-			
+		findViewById(R.id.login_check_new)
+			.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				doCreate(v);
+				doNewChecked(v);
 			}
 		});
 	}
@@ -121,7 +114,6 @@ public class WordditHome extends Activity {
 		
 		if(email.length() == 0 || password.length() == 0 || confirm.length() == 0) {
 			msg = R.string.msg_required_fields_missing;
-			msg = 0xFACE;
 			fail = true;
 		}
 		else if(password.equals(confirm) == false) {
