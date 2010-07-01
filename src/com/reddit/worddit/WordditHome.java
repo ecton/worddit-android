@@ -1,6 +1,11 @@
 package com.reddit.worddit;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,17 +23,26 @@ public class WordditHome extends Activity {
 		setup();
 	}
 	
+	public Dialog onCreateDialog(int id) {
+		switch(id) {
+		default:
+			Resources r = getResources();
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			String msg = "(null)";
+			try { msg = r.getString(id); }
+			catch(Exception e) { msg = String.format(r.getString(R.string.msg_not_found), id); }
+			
+			return builder.setMessage(msg)
+				.setTitle(R.string.app_name)
+				.setCancelable(true)
+				.setNeutralButton(R.string.label_ok, null)
+				.show();
+		}
+	}
+	
 	private void setup() {
 		// Force confirm password field to reflect default state of checkbox
 		doNewChecked(null);
-	}
-
-	public void doLogin(View v) {
-		doLogin(getEmailField(), getPasswordField());
-	}
-	
-	public void doCreate(View v) {
-		
 	}
 	
 	public void doNewChecked(View v) {
@@ -42,8 +56,62 @@ public class WordditHome extends Activity {
 		}
 	}
 	
+	public void doButtonClick(View v) {
+		CheckBox check = (CheckBox) findViewById(R.id.login_check_new);
+		if(check.isChecked()) {
+			doCreate(v);
+		}
+		else {
+			doLogin(v);
+		}
+	}
+	
+	public void doLogin(View v) {
+		doLogin(getEmailField(), getPasswordField());
+	}
+	
+	public void doCreate(View v) {
+		String email = getEmailField(), password = getPasswordField(), confirm = getConfirmField();
+		doCreate(email,password,confirm);
+	}
+	
 	protected void doLogin(String email, String password) {
-		Log.i(TAG, String.format("LOGIN: %s/%s\n",email,password));
+		boolean fail = false;
+		int msg = 0;
+		
+		if(email.length() == 0 || password.length() == 0) {
+			msg = R.string.msg_required_fields_missing;
+			fail = true;
+		}
+		
+		if(fail) {
+			showDialog(msg);
+		}
+		else {
+			// TODO: Do login stuff.
+		}
+	}
+	
+	protected void doCreate(String email, String password, String confirm) {
+		boolean fail = false;
+		int msg = 0;
+		
+		if(email.length() == 0 || password.length() == 0 || confirm.length() == 0) {
+			msg = R.string.msg_required_fields_missing;
+			msg = 0xFACE;
+			fail = true;
+		}
+		else if(password.equals(confirm) == false) {
+			msg = R.string.msg_confirm_password;
+			fail = true;
+		}
+		
+		if(fail) {
+			showDialog(msg);
+		}
+		else {
+			// TODO: Do create account stuff.
+		}
 	}
 	
 	protected String getEmailField() {
@@ -54,5 +122,10 @@ public class WordditHome extends Activity {
 	protected String getPasswordField() {
 		EditText passwordField = (EditText) this.findViewById(R.id.login_input_password);
 		return passwordField.getText().toString();
+	}
+	
+	protected String getConfirmField() {
+		EditText confirmField = (EditText) this.findViewById(R.id.login_input_confirmpassword);
+		return confirmField.getText().toString();
 	}
 }

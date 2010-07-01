@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">WordditHome</string>
+    <string name="app_name">Worddit</string>
     <string name="worddit_server">http://192.168.1.77:4567</string>
 
 	<string name="label_login">Login</string>
 	<string name="label_create">I'm new</string>
+	<string name="label_ok">OK</string>
 	
     <string name="hint_email">Email</string> 
     <string name="hint_password">Password</string> 
     <string name="hint_password_confirm">Password (confirm)</string> 
+    
+    <string name="msg_not_found">Could not find message ID \'%x\'.</string>
+    <string name="msg_required_fields_missing">All fields are required to be filled out.</string>
+    <string name="msg_confirm_password">Please confirm your password.</string>
 </resources>

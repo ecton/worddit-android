@@ -59,7 +59,7 @@
 					android:layout_gravity="center"
 					android:id="@+id/login_button_login"
 					android:text="@string/label_login"
-					android:onClick="doLogin"
+					android:onClick="doButtonClick"
 					android:layout_width="110dp"></Button>
 
 				<CheckBox
