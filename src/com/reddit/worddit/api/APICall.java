@@ -1,7 +1,6 @@
 package com.reddit.worddit.api;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 import android.os.AsyncTask;
 
