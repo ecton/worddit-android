@@ -201,7 +201,7 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 	
 	private boolean doPlay(String args[]) throws IOException {
 		if(args.length != 5) {
-			throw new IllegalArgumentException("Requires [id] [row] [col] [vertical|horizontal] [tiles]");
+			throw new IllegalArgumentException("Requires [id] [row] [col] [down|right] [tiles]");
 		}
 		
 		int row = Integer.parseInt(args[1]), col = Integer.parseInt(args[2]);
@@ -211,29 +211,54 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 		return (mPayload = mSession.play(id,row,col,dir,tiles)) != null;
 	}
 	
-	private boolean doSwap(String args[]) {
-		// TODO
-		return false;
+	private boolean doSwap(String args[]) throws IOException {
+		if(args.length != 2) {
+			throw new IllegalArgumentException("Requires [id] [tiles]");
+		}
+		
+		String id = args[0], tiles = args[1];
+		return (mPayload = mSession.swap(id, tiles)) != null;
 	}
 	
-	private boolean doPass(String args[]) {
-		// TODO
-		return false;
+	private boolean doPass(String args[]) throws IOException {
+		if(args.length != 1) {
+			throw new IllegalArgumentException("Requires [id]");
+		}
+		
+		String id = args[0];
+		return mSession.pass(id);
 	}
 	
-	private boolean doResign(String args[]) {
-		// TODO
-		return false;
+	private boolean doResign(String args[]) throws IOException {
+		if(args.length != 1) {
+			throw new IllegalArgumentException("Requires [id]");
+		}
+		
+		String id = args[0];
+		return mSession.resign(id);
 	}
 	
-	private boolean doChatHistory(String args[]) {
-		// TODO
-		return false;
+	private boolean doChatHistory(String args[]) throws IOException {
+		if(args.length != 2) {
+			throw new IllegalArgumentException("Requires [id] [limit]");
+		}
+		
+		
+		String id = args[0];
+		int limit = Integer.parseInt(args[1]);
+		
+		return (mPayload = mSession.getChatHistory(id, limit)) != null;
 	}
 	
-	private boolean doChatSend(String args[]) {
-		// TODO
-		return false;
+	private boolean doChatSend(String args[]) throws IOException {
+		if(args.length != 2) {
+			throw new IllegalArgumentException("Requires [id] [msg]");
+		}
+		
+		
+		String id = args[0], msg = args[1];
+		
+		return mSession.sendChatMessage(id, msg);
 	}
 	
 	/** Constant referring to an API call. */
