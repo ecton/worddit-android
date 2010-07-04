@@ -1,18 +1,25 @@
 package com.reddit.worddit.api;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 public class APICall extends AsyncTask<String,String,Boolean>{
 	private Session mSession;
 	private int mCall;
 	private Object mPayload;
 	
-	public APICall(Session s, int call) {
+	private int mLastResponse;
+	private Context mContext;
+	private ProgressDialog mProgress;
+	
+	public APICall(Context c, Session s, int call) {
 		mSession = s;
 		mCall = call;
+		mContext = c;
 	}
 	
 	public Object getPayload() {
@@ -58,6 +65,29 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 	}
 	
 	
+
+	
+	@Override
+	protected void onPreExecute() {
+		// TODO Auto-generated method stub
+		mProgress = new ProgressDialog(mContext);
+		mProgress.setIndeterminate(true);
+		mProgress.setMessage("Working...");
+		mProgress.show();
+		
+		
+		
+		
+	}
+
+	@Override
+	protected void onPostExecute(Boolean result) {
+		// TODO Auto-generated method stub
+		mLastResponse = mSession.getLastResponse();
+		mProgress.dismiss();
+		Toast.makeText(mContext, "session reported: " + mLastResponse, 1).show();
+	}
+
 	private boolean doAdd(String args[]) throws IOException {
 		if(args.length != 2) {
 			throw new IllegalArgumentException("Requires [email] [password]");
@@ -202,7 +232,7 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 	
 	private boolean doPlay(String args[]) throws IOException {
 		if(args.length != 5) {
-			throw new IllegalArgumentException("Requires [id] [row] [col] [vertical|horizontal] [tiles]");
+			throw new IllegalArgumentException("Requires [id] [row] [col] [down|right] [tiles]");
 		}
 		
 		int row = Integer.parseInt(args[1]), col = Integer.parseInt(args[2]);
@@ -212,28 +242,62 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 		return (mPayload = mSession.play(id,row,col,dir,tiles)) != null;
 	}
 	
-	private boolean doSwap(String args[]) {
-		// TODO
+	private boolean doSwap(String args[]) throws IOException {
+		if(args.length != 2) {
+			throw new IllegalArgumentException("Requires [id] [tiles]");
+		}
+		
+		String id = args[0], tiles = args[1];
+		return (mPayload = mSession.swap(id, tiles)) != null;
+	}
+	
+	private boolean doPass(String args[]) throws IOException {
+		if(args.length != 1) {
+			throw new IllegalArgumentException("Requires [id]");
+		}
+		
+		String id = args[0];
+		return mSession.pass(id);
+	}
+	
+	private boolean doResign(String args[]) throws IOException {
+		if(args.length != 1) {
+			throw new IllegalArgumentException("Requires [id]");
+		}
+		
+		String id = args[0];
+		return mSession.resign(id);
+	}
+	
+	private boolean doChatHistory(String args[]) throws IOException {
+		if(args.length != 2) {
+			throw new IllegalArgumentException("Requires [id] [limit]");
+		}
+		
+		
+		String id = args[0];
+		int limit = Integer.parseInt(args[1]);
+		
+		return (mPayload = mSession.getChatHistory(id, limit)) != null;
+	}
+	
+	private boolean doChatSend(String args[]) throws IOException {
+		if(args.length != 2) {
+			throw new IllegalArgumentException("Requires [id] [msg]");
+		}
+		
+		
+		String id = args[0], msg = args[1];
+		
+		return mSession.sendChatMessage(id, msg);
+	}
+	
+	public Boolean login(String email, String password) {
+		APICall task = (APICall) this.execute(email, password);
 		return false;
 	}
 	
-	private boolean doPass(String args[]) {
-		// TODO
-		return false;
-	}
-	
-	private boolean doResign(String args[]) {
-		// TODO
-		return false;
-	}
-	
-	private boolean doChatHistory(String args[]) {
-		// TODO
-		return false;
-	}
-	
-	private boolean doChatSend(String args[]) {
-		// TODO
+	public boolean createAccount (String email, String password) {
 		return false;
 	}
 	

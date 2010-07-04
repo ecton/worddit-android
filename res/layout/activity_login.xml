@@ -29,7 +29,8 @@
 				android:id="@+id/login_input_email"
 				android:lines="1"
 				android:ellipsize="end"
-				android:layout_width="220dp"></EditText>
+				android:layout_width="220dp" 
+				android:inputType="text"></EditText>
 			<EditText
 				android:layout_height="wrap_content"
 				android:layout_gravity="center"
