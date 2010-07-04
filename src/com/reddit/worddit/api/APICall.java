@@ -69,23 +69,17 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 	
 	@Override
 	protected void onPreExecute() {
-		// TODO Auto-generated method stub
 		mProgress = new ProgressDialog(mContext);
 		mProgress.setIndeterminate(true);
 		mProgress.setMessage("Working...");
 		mProgress.show();
-		
-		
-		
-		
 	}
 
 	@Override
 	protected void onPostExecute(Boolean result) {
-		// TODO Auto-generated method stub
 		mLastResponse = mSession.getLastResponse();
 		mProgress.dismiss();
-		Toast.makeText(mContext, "session reported: " + mLastResponse, 1).show();
+		Toast.makeText(mContext, "session reported: " + mLastResponse, 1).show(); // Just to test server response
 	}
 
 	private boolean doAdd(String args[]) throws IOException {
