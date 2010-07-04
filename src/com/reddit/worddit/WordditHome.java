@@ -1,17 +1,19 @@
 package com.reddit.worddit;
 
+import java.net.MalformedURLException;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+
+import com.reddit.worddit.api.APICall;
+import com.reddit.worddit.api.Session;
 
 public class WordditHome extends Activity {
 	public static final String TAG = "WordditHome";
@@ -109,9 +111,18 @@ public class WordditHome extends Activity {
 		}
 		else {
 			// TODO: Do login stuff.
+			try {
+				APICall task = new APICall(this, Session.makeSession(), APICall.USER_LOGIN);
+				boolean success = task.login(email, password);
+				//Log.i(TAG, String.format("Report: %x", success));
+			} catch (MalformedURLException e) {
+				//TODO: Find out what to do here 
+			}
+			
 		}
 	}
 	
+
 	protected void doCreate(String email, String password, String confirm) {
 		boolean fail = false;
 		int msg = 0;
