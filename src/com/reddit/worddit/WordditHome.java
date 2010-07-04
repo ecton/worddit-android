@@ -113,7 +113,8 @@ public class WordditHome extends Activity {
 			// TODO: Do login stuff.
 			try {
 				APICall task = new APICall(this, Session.makeSession(), APICall.USER_LOGIN);
-				boolean success = task.login(email, password);
+				task.login(email, password);
+				//boolean success = task.login(email, password);
 				//Log.i(TAG, String.format("Report: %x", success));
 			} catch (MalformedURLException e) {
 				//TODO: Find out what to do here 
