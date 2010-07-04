@@ -2,23 +2,18 @@ package com.reddit.worddit.api;
 
 import java.io.IOException;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.AsyncTask;
-import android.widget.Toast;
+
 
 public class APICall extends AsyncTask<String,String,Boolean>{
 	private Session mSession;
 	private int mCall;
 	private Object mPayload;
 	
-	private int mLastResponse;
-	private Context mContext;
-	private ProgressDialog mProgress;
+	private APICallback mContext;
 	
-	public APICall(Context c, Session s, int call) {
+	public APICall(APICallback c, Session s) {
 		mSession = s;
-		mCall = call;
 		mContext = c;
 	}
 	
@@ -69,17 +64,16 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 	
 	@Override
 	protected void onPreExecute() {
-		mProgress = new ProgressDialog(mContext);
+		/* mProgress = new ProgressDialog(null);
 		mProgress.setIndeterminate(true);
-		mProgress.setMessage("Working...");
-		mProgress.show();
+		mProgress.setTitle(mContext.getString(R.string.app_name));
+		mProgress.setMessage(mContext.getString(R.string.msg_working));
+		mProgress.show(); */
 	}
 
 	@Override
 	protected void onPostExecute(Boolean result) {
-		mLastResponse = mSession.getLastResponse();
-		mProgress.dismiss();
-		Toast.makeText(mContext, "session reported: " + mLastResponse, 1).show(); // Just to test server response
+		mContext.onCallComplete(result, 0, mSession);
 	}
 
 	private boolean doAdd(String args[]) throws IOException {
@@ -286,12 +280,17 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 		return mSession.sendChatMessage(id, msg);
 	}
 	
-	public Boolean login(String email, String password) {
-		APICall task = (APICall) this.execute(email, password);
-		return false;
+	public void login(String email, String password) {
+		mCall = USER_LOGIN;
+		this.execute(email, password); 
+		mPayload = mSession.getCookie();
+		 
 	}
 	
 	public boolean createAccount (String email, String password) {
+		mCall = USER_ADD;
+		this.execute(email, password);
+		mPayload = mSession.getCookie();
 		return false;
 	}
 	
