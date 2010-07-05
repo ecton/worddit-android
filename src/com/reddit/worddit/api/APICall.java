@@ -2,7 +2,10 @@ package com.reddit.worddit.api;
 
 import java.io.IOException;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 
 public class APICall extends AsyncTask<String,String,Boolean>{
@@ -10,10 +13,20 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 	private int mCall;
 	private Object mPayload;
 	
+<<<<<<< HEAD
 	private APICallback mContext;
 	
 	public APICall(APICallback c, Session s) {
 		mSession = s;
+=======
+	private int mLastResponse;
+	private Context mContext;
+	private ProgressDialog mProgress;
+	
+	public APICall(Context c, Session s, int call) {
+		mSession = s;
+		mCall = call;
+>>>>>>> d482c7e00a1860258893ce405bfb4f0fd3e504a5
 		mContext = c;
 	}
 	
@@ -64,12 +77,25 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 	
 	@Override
 	protected void onPreExecute() {
+<<<<<<< HEAD
 
+=======
+		mProgress = new ProgressDialog(mContext);
+		mProgress.setIndeterminate(true);
+		mProgress.setMessage("Working...");
+		mProgress.show();
+>>>>>>> d482c7e00a1860258893ce405bfb4f0fd3e504a5
 	}
 
 	@Override
 	protected void onPostExecute(Boolean result) {
+<<<<<<< HEAD
 		mContext.onCallComplete(result, 0, mSession); // Replace 0 with error message ID
+=======
+		mLastResponse = mSession.getLastResponse();
+		mProgress.dismiss();
+		Toast.makeText(mContext, "session reported: " + mLastResponse, 1).show(); // Just to test server response
+>>>>>>> d482c7e00a1860258893ce405bfb4f0fd3e504a5
 	}
 
 	private boolean doAdd(String args[]) throws IOException {
@@ -251,6 +277,7 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 		
 		String id = args[0];
 		return mSession.resign(id);
+<<<<<<< HEAD
 	}
 	
 	private boolean doChatHistory(String args[]) throws IOException {
@@ -287,6 +314,39 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 		mCall = USER_ADD;
 		this.execute(email, password);
 		mPayload = mSession.getCookie();
+=======
+	}
+	
+	private boolean doChatHistory(String args[]) throws IOException {
+		if(args.length != 2) {
+			throw new IllegalArgumentException("Requires [id] [limit]");
+		}
+		
+		
+		String id = args[0];
+		int limit = Integer.parseInt(args[1]);
+		
+		return (mPayload = mSession.getChatHistory(id, limit)) != null;
+	}
+	
+	private boolean doChatSend(String args[]) throws IOException {
+		if(args.length != 2) {
+			throw new IllegalArgumentException("Requires [id] [msg]");
+		}
+		
+		
+		String id = args[0], msg = args[1];
+		
+		return mSession.sendChatMessage(id, msg);
+	}
+	
+	public Boolean login(String email, String password) {
+		APICall task = (APICall) this.execute(email, password);
+		return false;
+	}
+	
+	public boolean createAccount (String email, String password) {
+>>>>>>> d482c7e00a1860258893ce405bfb4f0fd3e504a5
 		return false;
 	}
 	

@@ -16,7 +16,14 @@ import com.reddit.worddit.api.APICall;
 import com.reddit.worddit.api.APICallback;
 import com.reddit.worddit.api.Session;
 
+<<<<<<< HEAD
 public class WordditHome extends Activity implements APICallback {
+=======
+import com.reddit.worddit.api.APICall;
+import com.reddit.worddit.api.Session;
+
+public class WordditHome extends Activity {
+>>>>>>> d482c7e00a1860258893ce405bfb4f0fd3e504a5
 	public static final String TAG = "WordditHome";
 	
 	/** Called when the activity is first created. */
@@ -111,8 +118,14 @@ public class WordditHome extends Activity implements APICallback {
 			showDialog(msg);
 		}
 		else {
+<<<<<<< HEAD
 			try {
 				APICall task = new APICall(this, Session.makeSession());
+=======
+			// TODO: Do login stuff.
+			try {
+				APICall task = new APICall(this, Session.makeSession(), APICall.USER_LOGIN);
+>>>>>>> d482c7e00a1860258893ce405bfb4f0fd3e504a5
 				task.login(email, password);
 				//boolean success = task.login(email, password);
 				//Log.i(TAG, String.format("Report: %x", success));
