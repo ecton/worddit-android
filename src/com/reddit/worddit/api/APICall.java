@@ -2,16 +2,24 @@ package com.reddit.worddit.api;
 
 import java.io.IOException;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 public class APICall extends AsyncTask<String,String,Boolean>{
 	private Session mSession;
 	private int mCall;
 	private Object mPayload;
 	
-	public APICall(Session s, int call) {
+	private int mLastResponse;
+	private Context mContext;
+	private ProgressDialog mProgress;
+	
+	public APICall(Context c, Session s, int call) {
 		mSession = s;
 		mCall = call;
+		mContext = c;
 	}
 	
 	public Object getPayload() {
@@ -57,6 +65,23 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 	}
 	
 	
+
+	
+	@Override
+	protected void onPreExecute() {
+		mProgress = new ProgressDialog(mContext);
+		mProgress.setIndeterminate(true);
+		mProgress.setMessage("Working...");
+		mProgress.show();
+	}
+
+	@Override
+	protected void onPostExecute(Boolean result) {
+		mLastResponse = mSession.getLastResponse();
+		mProgress.dismiss();
+		Toast.makeText(mContext, "session reported: " + mLastResponse, 1).show(); // Just to test server response
+	}
+
 	private boolean doAdd(String args[]) throws IOException {
 		if(args.length != 2) {
 			throw new IllegalArgumentException("Requires [email] [password]");
@@ -259,6 +284,15 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 		String id = args[0], msg = args[1];
 		
 		return mSession.sendChatMessage(id, msg);
+	}
+	
+	public Boolean login(String email, String password) {
+		APICall task = (APICall) this.execute(email, password);
+		return false;
+	}
+	
+	public boolean createAccount (String email, String password) {
+		return false;
 	}
 	
 	/** Constant referring to an API call. */
