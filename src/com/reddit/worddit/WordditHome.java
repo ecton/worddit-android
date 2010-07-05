@@ -1,19 +1,22 @@
 package com.reddit.worddit;
 
+import java.net.MalformedURLException;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
-public class WordditHome extends Activity {
+import com.reddit.worddit.api.APICall;
+import com.reddit.worddit.api.APICallback;
+import com.reddit.worddit.api.Session;
+
+public class WordditHome extends Activity implements APICallback {
 	public static final String TAG = "WordditHome";
 	
 	/** Called when the activity is first created. */
@@ -37,7 +40,7 @@ public class WordditHome extends Activity {
 				.setTitle(R.string.app_name)
 				.setCancelable(true)
 				.setNeutralButton(R.string.label_ok, null)
-				.show();
+				.create();
 		}
 	}
 	
@@ -108,10 +111,19 @@ public class WordditHome extends Activity {
 			showDialog(msg);
 		}
 		else {
-			// TODO: Do login stuff.
+			try {
+				APICall task = new APICall(this, Session.makeSession());
+				task.login(email, password);
+				//boolean success = task.login(email, password);
+				//Log.i(TAG, String.format("Report: %x", success));
+			} catch (MalformedURLException e) {
+				//TODO: Find out what to do here 
+			}
+			
 		}
 	}
 	
+
 	protected void doCreate(String email, String password, String confirm) {
 		boolean fail = false;
 		int msg = 0;
@@ -130,6 +142,11 @@ public class WordditHome extends Activity {
 		}
 		else {
 			// TODO: Do create account stuff.
+			try {
+				new APICall(this, Session.makeSession()).createAccount(email, password);
+			} catch (MalformedURLException e) {
+				
+			}
 		}
 	}
 	
@@ -146,5 +163,11 @@ public class WordditHome extends Activity {
 	protected String getConfirmField() {
 		EditText confirmField = (EditText) this.findViewById(R.id.login_input_confirmpassword);
 		return confirmField.getText().toString();
+	}
+
+	@Override
+	public void onCallComplete(boolean success, int resId, Session sess) {
+		// TODO Auto-generated method stub
+		Toast.makeText(this, "Session returned: " + success + " with code: " + sess.getLastResponse(), 1).show();
 	}
 }

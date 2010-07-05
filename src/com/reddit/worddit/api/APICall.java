@@ -1,18 +1,20 @@
 package com.reddit.worddit.api;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 import android.os.AsyncTask;
+
 
 public class APICall extends AsyncTask<String,String,Boolean>{
 	private Session mSession;
 	private int mCall;
 	private Object mPayload;
 	
-	public APICall(Session s, int call) {
+	private APICallback mContext;
+	
+	public APICall(APICallback c, Session s) {
 		mSession = s;
-		mCall = call;
+		mContext = c;
 	}
 	
 	public Object getPayload() {
@@ -58,6 +60,18 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 	}
 	
 	
+
+	
+	@Override
+	protected void onPreExecute() {
+
+	}
+
+	@Override
+	protected void onPostExecute(Boolean result) {
+		mContext.onCallComplete(result, 0, mSession); // Replace 0 with error message ID
+	}
+
 	private boolean doAdd(String args[]) throws IOException {
 		if(args.length != 2) {
 			throw new IllegalArgumentException("Requires [email] [password]");
@@ -202,7 +216,7 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 	
 	private boolean doPlay(String args[]) throws IOException {
 		if(args.length != 5) {
-			throw new IllegalArgumentException("Requires [id] [row] [col] [vertical|horizontal] [tiles]");
+			throw new IllegalArgumentException("Requires [id] [row] [col] [down|right] [tiles]");
 		}
 		
 		int row = Integer.parseInt(args[1]), col = Integer.parseInt(args[2]);
@@ -212,28 +226,67 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 		return (mPayload = mSession.play(id,row,col,dir,tiles)) != null;
 	}
 	
-	private boolean doSwap(String args[]) {
-		// TODO
-		return false;
+	private boolean doSwap(String args[]) throws IOException {
+		if(args.length != 2) {
+			throw new IllegalArgumentException("Requires [id] [tiles]");
+		}
+		
+		String id = args[0], tiles = args[1];
+		return (mPayload = mSession.swap(id, tiles)) != null;
 	}
 	
-	private boolean doPass(String args[]) {
-		// TODO
-		return false;
+	private boolean doPass(String args[]) throws IOException {
+		if(args.length != 1) {
+			throw new IllegalArgumentException("Requires [id]");
+		}
+		
+		String id = args[0];
+		return mSession.pass(id);
 	}
 	
-	private boolean doResign(String args[]) {
-		// TODO
-		return false;
+	private boolean doResign(String args[]) throws IOException {
+		if(args.length != 1) {
+			throw new IllegalArgumentException("Requires [id]");
+		}
+		
+		String id = args[0];
+		return mSession.resign(id);
 	}
 	
-	private boolean doChatHistory(String args[]) {
-		// TODO
-		return false;
+	private boolean doChatHistory(String args[]) throws IOException {
+		if(args.length != 2) {
+			throw new IllegalArgumentException("Requires [id] [limit]");
+		}
+		
+		
+		String id = args[0];
+		int limit = Integer.parseInt(args[1]);
+		
+		return (mPayload = mSession.getChatHistory(id, limit)) != null;
 	}
 	
-	private boolean doChatSend(String args[]) {
-		// TODO
+	private boolean doChatSend(String args[]) throws IOException {
+		if(args.length != 2) {
+			throw new IllegalArgumentException("Requires [id] [msg]");
+		}
+		
+		
+		String id = args[0], msg = args[1];
+		
+		return mSession.sendChatMessage(id, msg);
+	}
+	
+	public void login(String email, String password) {
+		mCall = USER_LOGIN;
+		this.execute(email, password); 
+		mPayload = mSession.getCookie();
+		 
+	}
+	
+	public boolean createAccount (String email, String password) {
+		mCall = USER_ADD;
+		this.execute(email, password);
+		mPayload = mSession.getCookie();
 		return false;
 	}
 	
