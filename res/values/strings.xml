@@ -14,4 +14,12 @@
     <string name="msg_not_found">Could not find message ID \'%x\'.</string>
     <string name="msg_required_fields_missing">All fields are required to be filled out.</string>
     <string name="msg_confirm_password">Please confirm your password.</string>
+    <string name="msg_setup_error">There was a setup error!</string>
+    <string name="msg_communicating">Communicating with server...</string>
+    
+    <string name="msg_successful_action">Action completed successfully.</string>
+    <string name="msg_fail_connection">There was a problem with the network connection.</string>
+    <string name="msg_fail_bad_username">Invalid username or password.</string>
+    <string name="msg_fail_user_exists">That user already exists.</string>
+    <string name="msg_unknown_response">Could not understand server response. It\'s not your fault! Try again later.</string>
 </resources>

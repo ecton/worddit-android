@@ -2,13 +2,18 @@ package com.reddit.worddit.api;
 
 import java.io.IOException;
 
+import com.reddit.worddit.R;
+
 import android.os.AsyncTask;
+import android.util.Log;
 
 
 public class APICall extends AsyncTask<String,String,Boolean>{
+	public static final String TAG = "APICall";
 	private Session mSession;
 	private int mCall;
 	private Object mPayload;
+	private boolean mExceptionThrown = false;
 	
 	private APICallback mContext;
 	
@@ -19,6 +24,22 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 	
 	public Object getPayload() {
 		return mPayload;
+	}
+	
+	public int getMessage() {
+		if(mExceptionThrown == true) {
+			return R.string.msg_fail_connection;
+		}
+		
+		return APICall.resolveMessage(mCall, mSession.getLastResponse()); 
+	}
+	
+	public Session getSession() {
+		return mSession;
+	}
+	
+	public int getCall() {
+		return mCall;
 	}
 	
 	@Override
@@ -54,7 +75,7 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 			throw new IllegalArgumentException("Invalid API call: " + mCall);
 		}
 		catch(IOException e) {
-			// TODO: Find out what to do here.
+			mExceptionThrown = true;
 			return false;
 		}
 	}
@@ -69,7 +90,7 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 
 	@Override
 	protected void onPostExecute(Boolean result) {
-		mContext.onCallComplete(result, 0, mSession); // Replace 0 with error message ID
+		mContext.onCallComplete(result, this); // Replace 0 with error message ID
 	}
 
 	private boolean doAdd(String args[]) throws IOException {
@@ -276,18 +297,40 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 		return mSession.sendChatMessage(id, msg);
 	}
 	
-	public void login(String email, String password) {
+	public AsyncTask<String, String, Boolean> login(String email, String password) {
 		mCall = USER_LOGIN;
-		this.execute(email, password); 
-		mPayload = mSession.getCookie();
-		 
+		return this.execute(email, password); 
 	}
 	
-	public boolean createAccount (String email, String password) {
+	public AsyncTask<String, String, Boolean> createAccount (String email, String password) {
 		mCall = USER_ADD;
-		this.execute(email, password);
-		mPayload = mSession.getCookie();
-		return false;
+		return this.execute(email, password);
+	}
+	
+	public static int resolveMessage(int call, int response) {
+		switch(response) {
+		case Worddit.SUCCESS:
+		case Worddit.SUCCESS_ACCEPTED:
+		case Worddit.SUCCESS_CREATED:
+			// TODO: We may want more granular success messages in the future.
+			return R.string.msg_successful_action;
+			
+			
+		case Worddit.ERROR_NOT_FOUND:
+			switch(call) {
+			case APICall.USER_LOGIN: return R.string.msg_fail_bad_username;
+			}
+			break;
+			
+		case Worddit.ERROR_CONFLICT:
+			switch(call) {
+			case APICall.USER_ADD: return R.string.msg_fail_user_exists;
+			}
+			break;
+		}
+		
+		Log.w(TAG, String.format("Unable to make sense of server response '%d' for API call '%d'", response,call));
+		return R.string.msg_unknown_response; 
 	}
 	
 	/** Constant referring to an API call. */

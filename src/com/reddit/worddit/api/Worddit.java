@@ -9,13 +9,13 @@ package com.reddit.worddit.api;
 public class Worddit {
 	/** Constants for response codes returned by the Worddit server. */
 	public static final int
-		SUCCESS_CREATED = 201,
-		USER_EXISTS = 409,
 		SUCCESS = 200,
-		SUCCESS_NOT_VERIFIED = 202,
-		NOT_FOUND = 404,
-		AUTH_INVALID = 403,
-		ARGUMENT_ERROR = 400;
+		SUCCESS_CREATED = 201,
+		SUCCESS_ACCEPTED = 202,
+		ERROR_BAD_REQUEST = 400,
+		ERROR_FORBIDDEN = 403,
+		ERROR_NOT_FOUND = 404,
+		ERROR_CONFLICT = 409;
 	
 	/** Constant keywords for payloads (arguments) required by the Worddit server */
 	public static final String

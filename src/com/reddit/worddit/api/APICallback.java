@@ -2,6 +2,6 @@ package com.reddit.worddit.api;
 
 
 public interface APICallback {
-	void onCallComplete(boolean success, int resId, Session sess);
+	void onCallComplete(boolean success, APICall task);
 	
 }
