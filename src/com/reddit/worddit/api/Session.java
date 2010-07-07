@@ -287,6 +287,19 @@ public class Session {
 	}
 	
 	/**
+	 * Set the authentication cookie.
+	 * @param cookie to start using
+	 */
+	public void setCookie(String cookie) {
+		mCookie = cookie;
+	}
+	
+	public String getURL() {
+		Log.i(TAG, "String URL is: " + mURL.toExternalForm());
+		return mURL.toString();
+	}
+	
+	/**
 	 * Initiate an HTTP POST for the URL-encoded parameters passed.
 	 * @param path to make the HTTP POST to
 	 * @param params Arbitrary-length list of key/value pairs

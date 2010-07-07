@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
@@ -24,7 +25,7 @@ public class WordditHome extends Activity implements APICallback {
 	public static final String TAG = "WordditHome";
 	
 	/** Convenient matter to change the default URL to use */
-	private String URL = Session.API_URL;
+	private String URL = "http://130.160.75.97:8080/api";
 	
 	/** Session object to use */
 	private Session mSession;
@@ -218,8 +219,17 @@ public class WordditHome extends Activity implements APICallback {
 	@Override
 	public void onCallComplete(boolean success, APICall task) {
 		setLoading(false);
-		showDialog(task.getMessage());
-		// TODO: Display next activity if it was success
+		Session s = task.getSession();
+		
+		if(success && s.isAuthenticated()) {
+			Intent i = new Intent(this, GameList.class);
+			i.putExtra(Constants.EXTRA_COOKIE, s.getCookie());
+			i.putExtra(Constants.EXTRA_URL, s.getURL());
+			startActivity(i);
+		}
+		else {
+			showDialog(task.getMessage());
+		}
 	}
 	
 	/** Constant to represent the ProgressDialog */
