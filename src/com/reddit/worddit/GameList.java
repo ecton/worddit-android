@@ -7,6 +7,7 @@ import java.util.Arrays;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 
 import com.reddit.worddit.api.APICall;
@@ -15,8 +16,9 @@ import com.reddit.worddit.api.Session;
 import com.reddit.worddit.api.response.Game;
 
 public class GameList extends ListActivity implements APICallback {
+	public static final String TAG = "GameList";
 	
-	protected ArrayList<Game> mGameList;
+	protected Game[] mGames;
 	protected Session mSession;
 	
 	@Override
@@ -40,18 +42,22 @@ public class GameList extends ListActivity implements APICallback {
 		String url = b.getString(Constants.EXTRA_URL);
 		String cookie = b.getString(Constants.EXTRA_COOKIE);
 		
-		Session s = Session.makeSession(url);
-		s.setCookie(cookie);
+		Session s = Session.makeSession(url,cookie);
 		return s;
 	}
 	
 	
 	private void fetchGames() {
-		
+		APICall task = new APICall(this, mSession);
+		task.getGames();
 	}
 
 	@Override
 	public void onCallComplete(boolean success, APICall task) {
+		if(success) {
+			mGames = (Game[]) task.getPayload();
+		}
 		
+		// TODO: Display games in the list!
 	}
 }
