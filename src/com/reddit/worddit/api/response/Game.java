@@ -22,35 +22,27 @@ public class Game {
 	public String last_move_utc;
 	
 	/**
-	 * Checks to see if the player has been invited, but has not accepted this game.
-	 * @return true if the game is waiting to have the player respond to the invitation
+	 * Checks if the game is waiting for acceptance from some players.
+	 * @return true if the game is waiting on other players
 	 */
-	public boolean isInvited() {
-		return status.equalsIgnoreCase(STATUS_INVITED);
+	public boolean isPending() {
+		return status.equalsIgnoreCase(STATUS_PENDING);
 	}
 	
 	/**
-	 * Checks to see if the game has been accepted, but has not begun.
-	 * @return true if the game has been accepted but has not begun.
+	 * Checks if the game is currently being played.
+	 * @return true if all players have accepted
 	 */
-	public boolean isAccepted() {
-		return status.equalsIgnoreCase(STATUS_ACCEPTED);
+	public boolean isInProgress() {
+		return status.equalsIgnoreCase(STATUS_COMPLETED);
 	}
 	
 	/**
-	 * Checks to see if this game is active.
-	 * @return true if game is active, but not waiting on the player to move
+	 * Checks if the game is completed.
+	 * @return true if the game is completed
 	 */
-	public boolean isActive() {
-		return status.equalsIgnoreCase(STATUS_ACTIVE);
-	}
-	
-	/**
-	 * Checks to see if this game wants the player to move
-	 * @return true if this game is waiting for the player to move
-	 */
-	public boolean isWaiting() {
-		return status.equalsIgnoreCase(STATUS_WAITING);
+	public boolean isCompleted() {
+		return status.equalsIgnoreCase(STATUS_COMPLETED);
 	}
 	
 	/**
@@ -70,11 +62,9 @@ public class Game {
 	
 	/** Constant values for the 'status' field. */
 	public static final String
-		STATUS_INVITED = "invited",
-		STATUS_ACCEPTED = "accepted",
-		STATUS_ACTIVE = "active",
-		STATUS_WAITING = "waiting",
-		STATUS_PLAYING = "playing";
+		STATUS_PENDING = "pending",
+		STATUS_INPROGRESS = "inprogress",
+		STATUS_COMPLETED = "completed";
 	
 	public static void main(String [] args) {
 		
