@@ -384,8 +384,21 @@ public class Session {
 	 * @throws MalformedURLException If the URL is invalid.
 	 */
 	public static Session makeSession(String url) throws MalformedURLException {
+		return makeSession(url,null);
+	}
+	
+	/**
+	 * Create a session which uses a provided URL as the 
+	 * game server location.
+	 * @param url Which URL to use as the game server.
+	 * @param cookie A cookie to start using.
+	 * @return Session object set up for the URL
+	 * @throws MalformedURLException If the URL is invalid.
+	 */
+	public static Session makeSession(String url, String cookie) throws MalformedURLException {
 		Session s = new Session();
 		s.mURL = new URL(url);
+		s.setCookie(cookie);
 		return s;
 	}
 	
