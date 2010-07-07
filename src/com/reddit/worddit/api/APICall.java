@@ -1,11 +1,8 @@
 package com.reddit.worddit.api;
 
 import java.io.IOException;
-<<<<<<< HEAD
-=======
 
 import com.reddit.worddit.R;
->>>>>>> 35eeeac59b2416cc590445b9792e95c11a6281de
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -89,24 +86,12 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 	
 	@Override
 	protected void onPreExecute() {
-<<<<<<< HEAD
-		/* mProgress = new ProgressDialog(null);
-		mProgress.setIndeterminate(true);
-		mProgress.setTitle(mContext.getString(R.string.app_name));
-		mProgress.setMessage(mContext.getString(R.string.msg_working));
-		mProgress.show(); */
-=======
-
->>>>>>> 35eeeac59b2416cc590445b9792e95c11a6281de
+		
 	}
 
 	@Override
 	protected void onPostExecute(Boolean result) {
-<<<<<<< HEAD
-		mContext.onCallComplete(result, 0, mSession);
-=======
-		mContext.onCallComplete(result, this); // Replace 0 with error message ID
->>>>>>> 35eeeac59b2416cc590445b9792e95c11a6281de
+		mContext.onCallComplete(result, this);
 	}
 
 	private boolean doAdd(String args[]) throws IOException {
@@ -300,33 +285,7 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 		int limit = Integer.parseInt(args[1]);
 		
 		return (mPayload = mSession.getChatHistory(id, limit)) != null;
-<<<<<<< HEAD
-	}
-	
-	private boolean doChatSend(String args[]) throws IOException {
-		if(args.length != 2) {
-			throw new IllegalArgumentException("Requires [id] [msg]");
-		}
-		
-		
-		String id = args[0], msg = args[1];
-		
-		return mSession.sendChatMessage(id, msg);
-	}
-	
-	public void login(String email, String password) {
-		mCall = USER_LOGIN;
-		this.execute(email, password); 
-		mPayload = mSession.getCookie();
-		 
-	}
-	
-	public boolean createAccount (String email, String password) {
-		mCall = USER_ADD;
-		this.execute(email, password);
-		mPayload = mSession.getCookie();
-		return false;
-=======
+
 	}
 	
 	private boolean doChatSend(String args[]) throws IOException {
@@ -374,7 +333,6 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 		
 		Log.w(TAG, String.format("Unable to make sense of server response '%d' for API call '%d'", response,call));
 		return R.string.msg_unknown_response; 
->>>>>>> 35eeeac59b2416cc590445b9792e95c11a6281de
 	}
 	
 	/** Constant referring to an API call. */

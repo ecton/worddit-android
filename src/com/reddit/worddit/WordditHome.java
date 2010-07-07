@@ -5,18 +5,11 @@ import java.net.MalformedURLException;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-<<<<<<< HEAD
-import android.content.Intent;
-import android.content.res.Resources;
-import android.os.Bundle;
-import android.view.View;
-=======
 import android.app.ProgressDialog;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
->>>>>>> 35eeeac59b2416cc590445b9792e95c11a6281de
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -25,16 +18,9 @@ import com.reddit.worddit.api.APICall;
 import com.reddit.worddit.api.APICallback;
 import com.reddit.worddit.api.Session;
 
-<<<<<<< HEAD
-public class WordditHome extends Activity implements APICallback {
-=======
-import com.reddit.worddit.api.APICall;
-import com.reddit.worddit.api.APICallback;
-import com.reddit.worddit.api.Session;
 
 public class WordditHome extends Activity implements APICallback {
 	/** Debug tag */
->>>>>>> 35eeeac59b2416cc590445b9792e95c11a6281de
 	public static final String TAG = "WordditHome";
 	
 	/** Convenient matter to change the default URL to use */
@@ -58,21 +44,6 @@ public class WordditHome extends Activity implements APICallback {
 	
 	/** Called when we create a dialog using showDialog(int) */
 	public Dialog onCreateDialog(int id) {
-<<<<<<< HEAD
-		switch(id) {
-		default:
-			Resources r = getResources();
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			String msg = "(null)";
-			try { msg = r.getString(id); }
-			catch(Exception e) { msg = String.format(r.getString(R.string.msg_not_found), id); }
-			
-			return builder.setMessage(msg)
-				.setTitle(R.string.app_name)
-				.setCancelable(true)
-				.setNeutralButton(R.string.label_ok, null)
-				.create();
-=======
 		Resources r = getResources();
 		
 		// Catch if we're making a progress dialog
@@ -82,7 +53,6 @@ public class WordditHome extends Activity implements APICallback {
 			dlg.setTitle(R.string.app_name);
 			dlg.setMessage(r.getString(R.string.msg_communicating));
 			return dlg;
->>>>>>> 35eeeac59b2416cc590445b9792e95c11a6281de
 		}
 
 		// Revert to the default behavior, which is treat 'id' as a String resource
@@ -201,19 +171,9 @@ public class WordditHome extends Activity implements APICallback {
 			showDialog(msg);
 		}
 		else {
-<<<<<<< HEAD
-			try {
-				APICall task = new APICall(this, Session.makeSession());
-				task.login(email, password);
-			} catch (MalformedURLException e) {
-				//TODO: Find out what to do here 
-			}
-			
-=======
 			APICall task = new APICall(this, mSession);
 			task.login(email, password);
 			setLoading(true);
->>>>>>> 35eeeac59b2416cc590445b9792e95c11a6281de
 		}
 	}
 	
@@ -235,16 +195,7 @@ public class WordditHome extends Activity implements APICallback {
 			showDialog(msg);
 		}
 		else {
-<<<<<<< HEAD
-			// TODO: Do create account stuff.
-			try {
-				new APICall(this, Session.makeSession()).createAccount(email, password);
-			} catch (MalformedURLException e) {
-				
-			}
-=======
 			new APICall(this, mSession).createAccount(email, password);
->>>>>>> 35eeeac59b2416cc590445b9792e95c11a6281de
 		}
 	}
 	
@@ -262,17 +213,7 @@ public class WordditHome extends Activity implements APICallback {
 		EditText confirmField = (EditText) this.findViewById(R.id.login_input_confirmpassword);
 		return confirmField.getText().toString();
 	}
-<<<<<<< HEAD
 
-	@Override
-	public void onCallComplete(boolean success, int resId, Session sess) {
-		// TODO Auto-generated method stub
-		Toast.makeText(this, "Session returned: " + success + " with code: " + sess.getLastResponse(), 1).show();
-		Intent in = new Intent(this, GameList.class);
-		
-		startActivity(in);
-	}
-=======
 	
 	@Override
 	public void onCallComplete(boolean success, APICall task) {
@@ -284,5 +225,5 @@ public class WordditHome extends Activity implements APICallback {
 	/** Constant to represent the ProgressDialog */
 	public static final int
 		DIALOG_WAIT = 1;
->>>>>>> 35eeeac59b2416cc590445b9792e95c11a6281de
+
 }

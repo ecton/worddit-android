@@ -22,16 +22,9 @@ public class GameList extends ListActivity implements APICallback {
 	}
 	
 	@Override
-	public void onCallComplete(boolean success, int resId, Session sess) {
+	public void onCallComplete(boolean success, APICall task) {
 		// TODO Auto-generated method stub
-		
-		try {
-			mGameList = new ArrayList<Game>(Arrays.asList(sess.getGames()));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		setListAdapter(new ArrayAdapter<Game>(this, R.string.app_name, mGameList));
+
 	}
 
 	@Override
@@ -44,6 +37,6 @@ public class GameList extends ListActivity implements APICallback {
 	}
 
 	private void fetchGames() {
-		(new APICall(this, mSession)).getGames();
+
 	}
 }
