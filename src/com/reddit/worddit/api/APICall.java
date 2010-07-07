@@ -309,6 +309,11 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 		return this.execute(email, password);
 	}
 	
+	public AsyncTask<String,String,Boolean> getGames() {
+		mCall = USER_GAMES;
+		return execute();
+	}
+	
 	public static int resolveMessage(int call, int response) {
 		switch(response) {
 		case Worddit.SUCCESS:
