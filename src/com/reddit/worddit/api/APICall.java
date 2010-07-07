@@ -1,14 +1,23 @@
 package com.reddit.worddit.api;
 
 import java.io.IOException;
+<<<<<<< HEAD
+=======
+
+import com.reddit.worddit.R;
+>>>>>>> 35eeeac59b2416cc590445b9792e95c11a6281de
 
 import android.os.AsyncTask;
+import android.util.Log;
+
 
 
 public class APICall extends AsyncTask<String,String,Boolean>{
+	public static final String TAG = "APICall";
 	private Session mSession;
 	private int mCall;
 	private Object mPayload;
+	private boolean mExceptionThrown = false;
 	
 	private APICallback mContext;
 	
@@ -19,6 +28,22 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 	
 	public Object getPayload() {
 		return mPayload;
+	}
+	
+	public int getMessage() {
+		if(mExceptionThrown == true) {
+			return R.string.msg_fail_connection;
+		}
+		
+		return APICall.resolveMessage(mCall, mSession.getLastResponse()); 
+	}
+	
+	public Session getSession() {
+		return mSession;
+	}
+	
+	public int getCall() {
+		return mCall;
 	}
 	
 	@Override
@@ -54,7 +79,7 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 			throw new IllegalArgumentException("Invalid API call: " + mCall);
 		}
 		catch(IOException e) {
-			// TODO: Find out what to do here.
+			mExceptionThrown = true;
 			return false;
 		}
 	}
@@ -64,16 +89,24 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 	
 	@Override
 	protected void onPreExecute() {
+<<<<<<< HEAD
 		/* mProgress = new ProgressDialog(null);
 		mProgress.setIndeterminate(true);
 		mProgress.setTitle(mContext.getString(R.string.app_name));
 		mProgress.setMessage(mContext.getString(R.string.msg_working));
 		mProgress.show(); */
+=======
+
+>>>>>>> 35eeeac59b2416cc590445b9792e95c11a6281de
 	}
 
 	@Override
 	protected void onPostExecute(Boolean result) {
+<<<<<<< HEAD
 		mContext.onCallComplete(result, 0, mSession);
+=======
+		mContext.onCallComplete(result, this); // Replace 0 with error message ID
+>>>>>>> 35eeeac59b2416cc590445b9792e95c11a6281de
 	}
 
 	private boolean doAdd(String args[]) throws IOException {
@@ -267,6 +300,7 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 		int limit = Integer.parseInt(args[1]);
 		
 		return (mPayload = mSession.getChatHistory(id, limit)) != null;
+<<<<<<< HEAD
 	}
 	
 	private boolean doChatSend(String args[]) throws IOException {
@@ -292,6 +326,55 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 		this.execute(email, password);
 		mPayload = mSession.getCookie();
 		return false;
+=======
+	}
+	
+	private boolean doChatSend(String args[]) throws IOException {
+		if(args.length != 2) {
+			throw new IllegalArgumentException("Requires [id] [msg]");
+		}
+		
+		
+		String id = args[0], msg = args[1];
+		
+		return mSession.sendChatMessage(id, msg);
+	}
+	
+	public AsyncTask<String, String, Boolean> login(String email, String password) {
+		mCall = USER_LOGIN;
+		return this.execute(email, password); 
+	}
+	
+	public AsyncTask<String, String, Boolean> createAccount (String email, String password) {
+		mCall = USER_ADD;
+		return this.execute(email, password);
+	}
+	
+	public static int resolveMessage(int call, int response) {
+		switch(response) {
+		case Worddit.SUCCESS:
+		case Worddit.SUCCESS_ACCEPTED:
+		case Worddit.SUCCESS_CREATED:
+			// TODO: We may want more granular success messages in the future.
+			return R.string.msg_successful_action;
+			
+			
+		case Worddit.ERROR_NOT_FOUND:
+			switch(call) {
+			case APICall.USER_LOGIN: return R.string.msg_fail_bad_username;
+			}
+			break;
+			
+		case Worddit.ERROR_CONFLICT:
+			switch(call) {
+			case APICall.USER_ADD: return R.string.msg_fail_user_exists;
+			}
+			break;
+		}
+		
+		Log.w(TAG, String.format("Unable to make sense of server response '%d' for API call '%d'", response,call));
+		return R.string.msg_unknown_response; 
+>>>>>>> 35eeeac59b2416cc590445b9792e95c11a6281de
 	}
 	
 	/** Constant referring to an API call. */

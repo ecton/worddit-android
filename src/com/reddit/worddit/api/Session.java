@@ -86,7 +86,7 @@ public class Session {
 				Worddit.CLIENT_TYPE, mClientType,
 				Worddit.DEVICE_ID, mDeviceId);
 		
-		if( getLastResponse() != Worddit.SUCCESS && getLastResponse() != Worddit.SUCCESS_NOT_VERIFIED ) return false;
+		if( getLastResponse() != Worddit.SUCCESS && getLastResponse() != Worddit.SUCCESS_ACCEPTED ) return false;
 
 		// Server should have returned an auth cookie.
 		String value = HttpHelper.readCookie(connection, Worddit.AUTH_COOKIE);
@@ -392,7 +392,7 @@ public class Session {
 		try {
 			boolean result = s.createAccount(username, password);
 
-			if(result == false && s.getLastResponse() == Worddit.USER_EXISTS) {
+			if(result == false && s.getLastResponse() == Worddit.ERROR_CONFLICT) {
 				result = s.login(username, password);
 				if(result == true) {
 					System.out.println("Logged in!");
