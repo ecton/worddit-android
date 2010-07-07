@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
@@ -114,8 +115,6 @@ public class WordditHome extends Activity implements APICallback {
 			try {
 				APICall task = new APICall(this, Session.makeSession());
 				task.login(email, password);
-				//boolean success = task.login(email, password);
-				//Log.i(TAG, String.format("Report: %x", success));
 			} catch (MalformedURLException e) {
 				//TODO: Find out what to do here 
 			}
@@ -166,9 +165,11 @@ public class WordditHome extends Activity implements APICallback {
 	}
 
 	@Override
-	public Object onCallComplete(boolean success, int resId, Session sess) {
+	public void onCallComplete(boolean success, int resId, Session sess) {
 		// TODO Auto-generated method stub
 		Toast.makeText(this, "Session returned: " + success + " with code: " + sess.getLastResponse(), 1).show();
-		return null;
+		Intent in = new Intent(this, GameList.class);
+		
+		startActivity(in);
 	}
 }
