@@ -3,6 +3,7 @@ package com.reddit.worddit;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import android.app.ListActivity;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import com.reddit.worddit.adapters.GameListAdapter;
 import com.reddit.worddit.api.APICall;
 import com.reddit.worddit.api.APICallback;
 import com.reddit.worddit.api.Session;
@@ -30,7 +32,7 @@ public class GameList extends ListActivity implements APICallback {
 		try { mSession = fetchSession(); }
 		catch (MalformedURLException e) { /* Hope it doesn't happen */ }
 		
-		//fetchGames();
+		fetchGames();
 	}
 
 	protected Session fetchSession() throws MalformedURLException {
@@ -56,6 +58,8 @@ public class GameList extends ListActivity implements APICallback {
 	public void onCallComplete(boolean success, APICall task) {
 		if(success) {
 			mGames = (Game[]) task.getPayload();
+			
+			setListAdapter(new GameListAdapter(this, mGames, 0, R.id.item_game_nextup, R.id.item_game_lastplay));
 		}
 		
 		// TODO: Display games in the list!
