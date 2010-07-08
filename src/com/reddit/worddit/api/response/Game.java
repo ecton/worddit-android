@@ -13,6 +13,7 @@ public class Game {
 	public String status;
 	
 	/** Current player for this game. */
+	// TODO: Find a way we can change this to an 'int'
 	public String current_player;
 	
 	/** Players for this game in order of rotation. */
