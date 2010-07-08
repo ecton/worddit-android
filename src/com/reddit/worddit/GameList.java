@@ -1,15 +1,11 @@
 package com.reddit.worddit;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import com.reddit.worddit.adapters.GameListAdapter;
 import com.reddit.worddit.api.APICall;
