@@ -63,11 +63,15 @@ public class GameListAdapter extends BaseAdapter {
 		TextView lastPlay = (TextView) gameItem.findViewById(mLastMoveField);
 		
 		if(gameForView.current_player != null) {
-			nextUp.setText(gameForView.players[Integer.parseInt(gameForView.current_player) + 1].id);
+			nextUp.setText("Next Player: " + gameForView.players[Integer.parseInt(gameForView.current_player) + 1].id);
 		} else {
-			nextUp.setText("");
+			nextUp.setText("Next Player: ");
 		}
-		lastPlay.setText("YAHTZEE");
+		if(gameForView.last_move_utc != null) {
+			lastPlay.setText("Last Move: " + gameForView.last_move_utc);
+		} else {
+			lastPlay.setText("Last Move: ");
+		} // I figure we'll switch to labels, but I wanted something to print if they were null for testing.
 		
 		
 		return gameItem;
