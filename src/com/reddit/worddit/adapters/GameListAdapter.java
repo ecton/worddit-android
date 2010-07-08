@@ -44,7 +44,7 @@ public class GameListAdapter extends BaseAdapter {
 	@Override
 	public long getItemId(int n) {
 		Game g = mGames[n];
-		return Long.parseLong(g.id, 16);
+		return g.id.hashCode();
 	}
 
 	@Override
