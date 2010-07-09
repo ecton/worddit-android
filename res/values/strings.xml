@@ -6,6 +6,8 @@
 	<string name="label_login">Login</string>
 	<string name="label_create">I\'m new</string>
 	<string name="label_ok">OK</string>
+	<string name="label_pending">Pending</string>
+	<string name="label_completed">Completed</string>
 	<string name="label_nextup">Next up: %s</string>
 	<string name="label_lastplay">Last move: %s</string>
 

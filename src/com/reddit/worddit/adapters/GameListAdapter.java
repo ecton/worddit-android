@@ -62,11 +62,19 @@ public class GameListAdapter extends BaseAdapter {
 		TextView nextUp = (TextView) gameItem.findViewById(mNextPlayerField);
 		TextView lastPlay = (TextView) gameItem.findViewById(mLastMoveField);
 		
-		if(gameForView.current_player != null) {
-			nextUp.setText("Next Player: " + gameForView.players[Integer.parseInt(gameForView.current_player) + 1].id);
-		} else {
-			nextUp.setText("Next Player: ");
+		if(gameForView.isInProgress()) {
+			Context ctx = nextUp.getContext();
+			String label = ctx.getString(R.string.label_nextup);
+			nextUp.setText(String.format(label, gameForView.players[gameForView.current_player].id));
+		} else if (gameForView.isPending()) {
+			nextUp.setText(R.string.label_pending);
+		} else if(gameForView.isCompleted()) {
+			nextUp.setText(R.string.label_completed);
 		}
+		else {
+			nextUp.setText("Unknown state: " + gameForView.status);
+		}
+		
 		if(gameForView.last_move_utc != null) {
 			lastPlay.setText("Last Move: " + gameForView.last_move_utc);
 		} else {
