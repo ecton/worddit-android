@@ -223,8 +223,7 @@ public class WordditHome extends Activity implements APICallback {
 		
 		if(success && s.isAuthenticated()) {
 			Intent i = new Intent(this, GameList.class);
-			i.putExtra(Constants.EXTRA_COOKIE, s.getCookie());
-			i.putExtra(Constants.EXTRA_URL, s.getURL());
+			i.putExtra(Constants.EXTRA_SESSION, mSession);
 			startActivity(i);
 		}
 		else {

@@ -24,27 +24,13 @@ public class GameList extends ListActivity implements APICallback {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.worddit_game_list);
-		
-		try { mSession = fetchSession(); }
-		catch (MalformedURLException e) { /* Hope it doesn't happen */ }
+
+		Intent i = getIntent();
+		mSession = (Session) i.getParcelableExtra(Constants.EXTRA_SESSION);
 		
 		fetchGames();
 	}
 
-	protected Session fetchSession() throws MalformedURLException {
-		Intent i = getIntent();
-		return fetchSession(i.getExtras());
-	}
-	
-	protected Session fetchSession(Bundle b) throws MalformedURLException {
-		String url = b.getString(Constants.EXTRA_URL);
-		String cookie = b.getString(Constants.EXTRA_COOKIE);
-		
-		Session s = Session.makeSession(url,cookie);
-		return s;
-	}
-	
-	
 	private void fetchGames() {
 		APICall task = new APICall(this, mSession);
 		task.getGames();
