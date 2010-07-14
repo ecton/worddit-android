@@ -13,12 +13,14 @@ import android.widget.TextView;
 public class GameListAdapter extends BaseAdapter {
 	protected Game[] mGames;
 	protected LayoutInflater mInflater;
+	protected Context mContext;
 	
 	private int mStatusField, mNextPlayerField, mLastMoveField; 
 	
 	public GameListAdapter(Context ctx, Game[] games) {
 		mGames = games;
 		mInflater = (LayoutInflater)ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		mContext = ctx;
 		mNextPlayerField = R.id.item_game_nextup;
 		mLastMoveField = R.id.item_game_lastplay;
 	}
@@ -59,28 +61,50 @@ public class GameListAdapter extends BaseAdapter {
 			gameItem = convertView;
 		}
 		
-		TextView nextUp = (TextView) gameItem.findViewById(mNextPlayerField);
-		TextView lastPlay = (TextView) gameItem.findViewById(mLastMoveField);
+		TextView main = (TextView) gameItem.findViewById(mNextPlayerField);
+		TextView subtext = (TextView) gameItem.findViewById(mLastMoveField);
 		
+		// Pre-decide the player's status.
+		int playerStatus = R.string.label_invalidvalue;
+		if(gameForView.isInvited()) {
+			playerStatus = R.string.label_invited;
+		}
+		else if(gameForView.isPlaying()) {
+			playerStatus = R.string.label_playing;
+		}
+			
+		
+		// If the game is in progress, we'd want to show who is next up
+		// If possible, we can show when the last move was made, otherwise,
+		// we can just show the player is playing in this game.
 		if(gameForView.isInProgress()) {
-			Context ctx = nextUp.getContext();
-			String label = ctx.getString(R.string.label_nextup);
-			nextUp.setText(String.format(label, gameForView.players[gameForView.current_player].id));
-		} else if (gameForView.isPending()) {
-			nextUp.setText(R.string.label_pending);
-		} else if(gameForView.isCompleted()) {
-			nextUp.setText(R.string.label_completed);
+			String mainLabel = mContext.getString(R.string.label_nextup);
+			main.setText(String.format(mainLabel, gameForView.players[gameForView.current_player].id));
+			
+			if(gameForView.last_move_utc != null) {
+				String subLabel = mContext.getString(R.string.label_lastplay);
+				subtext.setText(String.format(subLabel, gameForView.last_move_utc));
+			}
+			else {
+				subtext.setText(playerStatus);
+			}
+		}
+		// Simply show that the server is waiting on players
+		// and show the current players response
+		else if (gameForView.isPending()) {
+			main.setText(R.string.label_pending);
+			subtext.setText(playerStatus);
+		}
+		// TODO: We could display a 'winner' here
+		// Show the game is completed and the last move.
+		else if(gameForView.isCompleted()) {
+			main.setText(R.string.label_completed);
+			String subLabel = mContext.getString(R.string.label_lastplay);
+			subtext.setText(String.format(subLabel, gameForView.last_move_utc));
 		}
 		else {
-			nextUp.setText("Unknown state: " + gameForView.game_status);
+			main.setText("Unknown state: " + gameForView.game_status);
 		}
-		
-		if(gameForView.last_move_utc != null) {
-			lastPlay.setText("Last Move: " + gameForView.last_move_utc);
-		} else {
-			lastPlay.setText("Last Move: ");
-		} // I figure we'll switch to labels, but I wanted something to print if they were null for testing.
-		
 		
 		return gameItem;
 	}
