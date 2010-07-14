@@ -1,11 +1,9 @@
 package com.reddit.worddit;
 
-import java.net.MalformedURLException;
 
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.reddit.worddit.adapters.GameListAdapter;
 import com.reddit.worddit.api.APICall;
@@ -21,7 +19,6 @@ public class GameList extends ListActivity implements APICallback {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.worddit_game_list);
 
@@ -43,7 +40,5 @@ public class GameList extends ListActivity implements APICallback {
 			
 			setListAdapter(new GameListAdapter(this, mGames, 0, R.id.item_game_nextup, R.id.item_game_lastplay));
 		}
-		
-		// TODO: Display games in the list!
 	}
 }

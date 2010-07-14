@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.reddit.worddit.api.APICall;
 import com.reddit.worddit.api.APICallback;
@@ -25,7 +24,7 @@ public class WordditHome extends Activity implements APICallback {
 	public static final String TAG = "WordditHome";
 	
 	/** Convenient matter to change the default URL to use */
-	private String URL = Session.API_URL;
+	private String URL = "http://130.160.75.97:8080/api";//Session.API_URL;
 	
 	/** Session object to use */
 	private Session mSession;

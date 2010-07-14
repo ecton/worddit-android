@@ -14,6 +14,9 @@
 	<string name="label_playing">You\'re playing!</string>
 	<string name="label_invited">You\'re invited!</string>
 	
+	<string name="label_requested">Requested</string>
+	<string name="label_active">Active</string>
+	
 	<string name="label_games">Games</string>
 	<string name="label_friends">Friends</string>
 
