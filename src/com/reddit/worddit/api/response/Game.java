@@ -29,7 +29,7 @@ public class Game {
 	 * @return true if the game is waiting on current player to accept
 	 */
 	public boolean isInvited() {
-		return player_status.equalsIgnoreCase(STATUS_INVITED);
+		return STATUS_INVITED.equalsIgnoreCase(player_status);
 	}
 	
 	/**
@@ -37,7 +37,7 @@ public class Game {
 	 * @return true if current player has accepted
 	 */
 	public boolean isPlaying() {
-		return player_status.equalsIgnoreCase(STATUS_PLAYING);
+		return STATUS_PLAYING.equalsIgnoreCase(player_status);
 	}
 	
 	/**
@@ -45,7 +45,7 @@ public class Game {
 	 * @return true if the game is declined by current player
 	 */
 	public boolean isDeclined() {
-		return player_status.equalsIgnoreCase(STATUS_DECLINED);
+		return STATUS_DECLINED.equalsIgnoreCase(player_status);
 	}
 	
 	/**
@@ -53,7 +53,7 @@ public class Game {
 	 * @return true if not all players have accepted
 	 */
 	public boolean isPending() {
-		return game_status.equalsIgnoreCase(STATUS_PENDING);
+		return STATUS_PENDING.equalsIgnoreCase(game_status);
 	}
 	
 	/**
@@ -61,7 +61,7 @@ public class Game {
 	 * @return true if all players have accepted
 	 */
 	public boolean isInProgress() {
-		return game_status.equalsIgnoreCase(STATUS_INPROGRESS);
+		return STATUS_INPROGRESS.equalsIgnoreCase(game_status);
 	}
 	
 	/**
@@ -69,7 +69,7 @@ public class Game {
 	 * @return true if this game has been completed
 	 */
 	public boolean isCompleted() {
-		return game_status.equalsIgnoreCase(STATUS_COMPLETED);
+		return STATUS_COMPLETED.equalsIgnoreCase(game_status);
 	}
 	
 	/**

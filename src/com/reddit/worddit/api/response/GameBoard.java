@@ -29,7 +29,7 @@ public class GameBoard {
 		 * @return true if tile is on double letter square.
 		 */
 		public boolean isDoubleLetter() {
-			return special.equalsIgnoreCase(L2);
+			return L2.equalsIgnoreCase(special);
 		}
 		
 		/**
@@ -37,7 +37,7 @@ public class GameBoard {
 		 * @return true if tile is on triple letter square.
 		 */
 		public boolean isTripleLetter() {
-			return special.equalsIgnoreCase(L3);
+			return L3.equalsIgnoreCase(special);
 		}
 		
 		/**
@@ -45,7 +45,7 @@ public class GameBoard {
 		 * @return true if tile is on double word square.
 		 */
 		public boolean isDoubleWord() {
-			return special.equalsIgnoreCase(W2);
+			return W2.equalsIgnoreCase(special);
 		}
 		
 		/**
@@ -53,7 +53,7 @@ public class GameBoard {
 		 * @return true if tile is on double triple square.
 		 */
 		public boolean isTripleWord() {
-			return special.equalsIgnoreCase(W3);
+			return W3.equalsIgnoreCase(special);
 		}
 		
 		/**
@@ -61,7 +61,7 @@ public class GameBoard {
 		 * @return true if tile is on the start square.
 		 */
 		public boolean isStart() {
-			return special.equalsIgnoreCase(START);
+			return START.equalsIgnoreCase(special);
 		}
 		
 		/** Constants the server uses to represent special tiles. */

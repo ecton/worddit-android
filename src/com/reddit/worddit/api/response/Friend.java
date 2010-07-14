@@ -18,7 +18,7 @@ public class Friend {
 	 * @return
 	 */
 	public boolean isRequested() {
-		return status.equals(STATUS_REQUESTED);
+		return STATUS_REQUESTED.equalsIgnoreCase(status);
 	}
 	
 	/**
@@ -26,7 +26,7 @@ public class Friend {
 	 * @return
 	 */
 	public boolean isPending() {
-		return status.equals(STATUS_PENDING);
+		return STATUS_PENDING.equalsIgnoreCase(status);
 	}
 	
 	/**
@@ -34,7 +34,7 @@ public class Friend {
 	 * @return true if this friendship is active
 	 */
 	public boolean isActive() {
-		return status.equals(STATUS_ACTIVE);
+		return STATUS_ACTIVE.equalsIgnoreCase(status);
 	}
 	
 	/** Constants posed by the Worddit server */
