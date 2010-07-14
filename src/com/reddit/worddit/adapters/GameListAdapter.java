@@ -72,7 +72,7 @@ public class GameListAdapter extends BaseAdapter {
 			nextUp.setText(R.string.label_completed);
 		}
 		else {
-			nextUp.setText("Unknown state: " + gameForView.status);
+			nextUp.setText("Unknown state: " + gameForView.game_status);
 		}
 		
 		if(gameForView.last_move_utc != null) {
