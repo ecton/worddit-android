@@ -10,6 +10,8 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -21,7 +23,7 @@ import com.reddit.worddit.api.response.Move;
 import com.reddit.worddit.api.response.Profile;
 import com.reddit.worddit.api.response.Tile;
 
-public class Session {
+public class Session implements Parcelable {
 	/** Debug tag */
 	public static final String TAG = "Session";
 	
@@ -49,6 +51,16 @@ public class Session {
 	
 	/** This object can't be instantiated directly. */
 	private Session() { }
+	
+	/** The Session object is restorable from a Parcel 
+	 * @throws MalformedURLException */
+	private Session (Parcel in) throws MalformedURLException {
+		mURL = new URL( in.readString() );
+		
+		if(in.dataAvail() > 0) {
+			mCookie = in.readString();
+		}
+	}
 	
 	/**
 	 * Attempt to create an account.
@@ -402,36 +414,41 @@ public class Session {
 		return s;
 	}
 	
-	/**
-	 * Test function to show basically how the API works.
-	 * @param args *ignored*
+	/*
+	 * (non-Javadoc)
+	 * @see android.os.Parcelable#describeContents()
 	 */
-	public static void main(String args[]) {
-		Session s = null;
-		try {
-			s = Session.makeSession(API_URL);
-		} catch (MalformedURLException e) {
-			System.exit(1);
-		}
-		
-		String username = "testguy@example.com", password = "secret";
-		try {
-			boolean result = s.createAccount(username, password);
+	@Override
+	public int describeContents() {
+		return 0;
+	}
 
-			if(result == false && s.getLastResponse() == Worddit.ERROR_CONFLICT) {
-				result = s.login(username, password);
-				if(result == true) {
-					System.out.println("Logged in!");
+	/*
+	 * (non-Javadoc)
+	 * @see android.os.Parcelable#writeToParcel(android.os.Parcel, int)
+	 */
+	@Override
+	public void writeToParcel(Parcel out, int flags) {
+		out.writeString(getURL());
+		out.writeString(getCookie());
+	}
+	
+	/** Generates Session objects for the Parcelable subsystem */
+	public static final Parcelable.Creator<Session> CREATOR
+		= new Parcelable.Creator<Session>() {
+			@Override
+			public Session createFromParcel(Parcel in) {
+				try {
+					return new Session(in);
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+					return null;
 				}
 			}
-			else if(result == true) {
-				System.out.println("Account created!");
+
+			@Override
+			public Session[] newArray(int size) {
+				return new Session[size];
 			}
-			else {
-				System.err.println("Failed with http code: " + s.getLastResponse());
-			}
-		} catch (IOException e) {
-			System.err.println("Connection error");
-		}
-	}
+	};
 }
