@@ -24,6 +24,25 @@ public class FriendList extends ListActivity implements APICallback {
 	protected Friend[] mFriends;
 	protected Session mSession;
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.friends_options_menu, menu);
+		return true;
+		
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()) {
+		case R.id.friend_add:
+			//TODO: add friend
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
