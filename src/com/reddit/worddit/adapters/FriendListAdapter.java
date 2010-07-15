@@ -66,13 +66,13 @@ public class FriendListAdapter extends BaseAdapter {
 		friendEmail.setText(friendForView.email);
 		
 		if(friendForView.isRequested()) {
-			friendStatus.setText(R.string.label_requested);
+			friendStatus.setText(R.string.label_friend_requested);
 		}
 		else if(friendForView.isPending()) {
-			friendStatus.setText(R.string.label_pending);
+			friendStatus.setText(R.string.label_friend_pending);
 		}
 		else if(friendForView.isActive()) {
-			friendStatus.setText(R.string.label_active);
+			friendStatus.setText(R.string.label_friend_active);
 		}
 		
 		return friendItem;

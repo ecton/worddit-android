@@ -92,13 +92,13 @@ public class GameListAdapter extends BaseAdapter {
 		// Simply show that the server is waiting on players
 		// and show the current players response
 		else if (gameForView.isPending()) {
-			main.setText(R.string.label_pending);
+			main.setText(R.string.label_game_pending);
 			subtext.setText(playerStatus);
 		}
 		// TODO: We could display a 'winner' here
 		// Show the game is completed and the last move.
 		else if(gameForView.isCompleted()) {
-			main.setText(R.string.label_completed);
+			main.setText(R.string.label_game_completed);
 			String subLabel = mContext.getString(R.string.label_lastplay);
 			subtext.setText(String.format(subLabel, gameForView.last_move_utc));
 		}
