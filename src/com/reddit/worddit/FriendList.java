@@ -23,8 +23,7 @@ public class FriendList extends ListActivity implements APICallback {
 	
 	protected Friend[] mFriends;
 	protected Session mSession;
-	
-	public static final int ADDFRIEND_ID = Menu.FIRST+1;
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
