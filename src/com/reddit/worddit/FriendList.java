@@ -73,10 +73,10 @@ public class FriendList extends ListActivity implements APICallback {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		switch (item.getItemId()) {
 			case R.id.friend_accept:
-				new APICall(this, mSession).acceptFriend(new String[]{mFriends[info.position].id});
+				new APICall(this, mSession).acceptFriend(mFriends[info.position].id);
 				return true;
 			case R.id.friend_reject:
-				new APICall(this, mSession).rejectFriend(new String[]{mFriends[info.position].id});
+				new APICall(this, mSession).rejectFriend(mFriends[info.position].id);
 				return true;
 			case R.id.friend_game_request:
 				// TODO: Request game
