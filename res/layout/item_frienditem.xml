@@ -6,7 +6,7 @@
 	android:orientation="vertical">
 	<TextView
 		android:layout_height="wrap_content"
-		android:textSize="30sp"
+		android:textSize="20sp"
 		android:layout_width="fill_parent"
 		android:id="@+id/item_friend_email"></TextView>
 	<TextView
