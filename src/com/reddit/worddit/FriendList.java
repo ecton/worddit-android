@@ -38,7 +38,7 @@ public class FriendList extends ListActivity implements APICallback {
 		if(success) {
 			mFriends = (Friend[]) task.getPayload();
 			
-			setListAdapter(new FriendListAdapter(this, mFriends, R.id.item_friend_id, R.id.item_friend_status));
+			setListAdapter(new FriendListAdapter(this, mFriends, R.id.item_friend_email, R.id.item_friend_status));
 		}
 	}
 }

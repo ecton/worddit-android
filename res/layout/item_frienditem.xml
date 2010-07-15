@@ -8,7 +8,7 @@
 		android:layout_height="wrap_content"
 		android:textSize="30sp"
 		android:layout_width="fill_parent"
-		android:id="@+id/item_friend_id"></TextView>
+		android:id="@+id/item_friend_email"></TextView>
 	<TextView
 		android:layout_height="wrap_content"
 		android:layout_width="fill_parent"

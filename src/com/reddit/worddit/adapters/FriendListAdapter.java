@@ -15,20 +15,20 @@ public class FriendListAdapter extends BaseAdapter {
 	protected LayoutInflater mInflater;
 	protected Context mContext;
 	
-	private int mIDField, mStatusField; 
+	private int mEmailField, mStatusField; 
 	
 	public FriendListAdapter(Context ctx, Friend[] friends) {
 		mFriends = friends;
 		mInflater = (LayoutInflater)ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		mContext = ctx;
-		mIDField = R.id.item_friend_id;
+		mEmailField = R.id.item_friend_email;
 		mStatusField = R.id.item_friend_status;
 	}
 	
 	public FriendListAdapter(Context ctx, Friend[] friends, 
-			int idField, int statusField) {
+			int emailField, int statusField) {
 		this(ctx, friends);
-		mIDField = idField;
+		mEmailField = emailField;
 		mStatusField = statusField;
 	}
 
@@ -60,10 +60,10 @@ public class FriendListAdapter extends BaseAdapter {
 			friendItem = convertView;
 		}
 		
-		TextView friendID = (TextView) friendItem.findViewById(mIDField);
+		TextView friendEmail = (TextView) friendItem.findViewById(mEmailField);
 		TextView friendStatus = (TextView) friendItem.findViewById(mStatusField);
 		
-		friendID.setText(friendForView.id);
+		friendEmail.setText(friendForView.email);
 		
 		if(friendForView.isRequested()) {
 			friendStatus.setText(R.string.label_requested);

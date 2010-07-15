@@ -6,9 +6,9 @@ package com.reddit.worddit.api.response;
  * @author OEP
  *
  */
-public class Friend {
+public class Friend extends Profile {
 	/** The ID of this friend */
-	public String id;
+	//public String id;
 	
 	/** Status of friendship */
 	public String status;

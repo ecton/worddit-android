@@ -356,7 +356,7 @@ public class Session implements Parcelable {
 		return output.toString();
 	}
 	
-	private <T> String collapse(T array[], char delimeter) {
+	/*private <T> String collapse(T array[], char delimeter) {
 		StringBuffer output = new StringBuffer();
 		for(int i = 0; i < array.length; i++) {
 			T bit = array[i];
@@ -364,7 +364,7 @@ public class Session implements Parcelable {
 			if(i < array.length - 1) output.append(',');
 		}
 		return output.toString();
-	}
+	}*/
 	
 	/**
 	 * Initiate an HTTP GET for the given path.

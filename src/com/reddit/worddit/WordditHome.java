@@ -24,7 +24,7 @@ public class WordditHome extends Activity implements APICallback {
 	public static final String TAG = "WordditHome";
 	
 	/** Convenient matter to change the default URL to use */
-	private String URL = "http://130.160.75.97:8080/api";//Session.API_URL;
+	private String URL = Session.API_URL;
 	
 	/** Session object to use */
 	private Session mSession;

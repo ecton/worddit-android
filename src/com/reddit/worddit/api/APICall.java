@@ -319,6 +319,11 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 		return execute();
 	}
 	
+	public AsyncTask<String, String, Boolean> findUser(String args[]) {
+		mCall = USER_FIND;
+		return execute(args);
+	}
+	
 	public static int resolveMessage(int call, int response) {
 		switch(response) {
 		case Worddit.SUCCESS:
