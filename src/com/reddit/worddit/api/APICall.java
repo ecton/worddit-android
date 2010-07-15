@@ -324,6 +324,11 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 		return execute(args);
 	}
 	
+	public AsyncTask<String, String, Boolean> acceptFriend(String args[]) {
+		mCall = USER_ACCEPTFRIEND;
+		return execute(args);
+	}
+	
 	public static int resolveMessage(int call, int response) {
 		switch(response) {
 		case Worddit.SUCCESS:

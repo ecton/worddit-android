@@ -1,8 +1,6 @@
 package com.reddit.worddit;
 
 
-import java.io.IOException;
-
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,7 +22,6 @@ public class FriendList extends ListActivity implements APICallback {
 	
 	protected Friend[] mFriends;
 	protected Session mSession;
-	private boolean mExceptionThrown = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,28 +46,26 @@ public class FriendList extends ListActivity implements APICallback {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		switch (item.getItemId()) {
 			case R.id.friend_accept:
-			try {
-				return mSession.acceptFriend(mFriends[info.position].id); //Should probably be APICall.
-			} catch (IOException e) {
-				mExceptionThrown = true;
-				return false;
-			}
+				new APICall(this, mSession).acceptFriend(new String[]{mFriends[info.position].id});
 			default:
 				return super.onContextItemSelected(item);
 		}
 	}
 
 	private void fetchFriends() {
-		APICall task = new APICall(this, mSession);
-		task.getFriends();
+		new APICall(this, mSession).getFriends();
 	}
 
 	@Override
 	public void onCallComplete(boolean success, APICall task) {
 		if(success) {
-			mFriends = (Friend[]) task.getPayload();
+			if(task.getCall() == APICall.USER_FRIENDS) {
+				mFriends = (Friend[]) task.getPayload();
 			
-			setListAdapter(new FriendListAdapter(this, mFriends, R.id.item_friend_email, R.id.item_friend_status));
+				setListAdapter(new FriendListAdapter(this, mFriends, R.id.item_friend_email, R.id.item_friend_status));
+			} else if(task.getCall() == APICall.USER_ACCEPTFRIEND) {
+				new APICall(this, mSession).getFriends(); // Way too inefficient, but temporarily gets the job done.
+			}
 		}
 	}
 }
