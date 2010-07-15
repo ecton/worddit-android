@@ -39,7 +39,10 @@ public class FriendList extends ListActivity implements APICallback {
             						ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.friend_menu, menu);
+		menu.setHeaderTitle(mFriends[((AdapterContextMenuInfo) menuInfo).position].email);
+		if(mFriends[((AdapterContextMenuInfo) menuInfo).position].isRequested()) {
+			inflater.inflate(R.menu.friend_request_menu, menu);
+		}
 	}
 
 	public boolean onContextItemSelected(MenuItem item) {
@@ -47,6 +50,10 @@ public class FriendList extends ListActivity implements APICallback {
 		switch (item.getItemId()) {
 			case R.id.friend_accept:
 				new APICall(this, mSession).acceptFriend(new String[]{mFriends[info.position].id});
+				return true;
+			case R.id.friend_reject:
+				new APICall(this, mSession).rejectFriend(new String[]{mFriends[info.position].id});
+				return true;
 			default:
 				return super.onContextItemSelected(item);
 		}
@@ -63,7 +70,7 @@ public class FriendList extends ListActivity implements APICallback {
 				mFriends = (Friend[]) task.getPayload();
 			
 				setListAdapter(new FriendListAdapter(this, mFriends, R.id.item_friend_email, R.id.item_friend_status));
-			} else if(task.getCall() == APICall.USER_ACCEPTFRIEND) {
+			} else if(task.getCall() == APICall.USER_ACCEPTFRIEND || task.getCall() == APICall.USER_DEFRIEND) {
 				new APICall(this, mSession).getFriends(); // Way too inefficient, but temporarily gets the job done.
 			}
 		}

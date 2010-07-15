@@ -324,6 +324,11 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 		return execute(args);
 	}
 	
+	public AsyncTask<String, String, Boolean> rejectFriend(String args[]) {
+		mCall = USER_DEFRIEND;
+		return execute(args);
+	}
+	
 	public AsyncTask<String, String, Boolean> acceptFriend(String args[]) {
 		mCall = USER_ACCEPTFRIEND;
 		return execute(args);
