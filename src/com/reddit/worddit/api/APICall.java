@@ -319,20 +319,21 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 		return execute();
 	}
 	
-	public AsyncTask<String, String, Boolean> findUser(String args[]) {
+	public AsyncTask<String, String, Boolean> findUser(String args) {
 		mCall = USER_FIND;
 		return execute(args);
 	}
 	
-	public AsyncTask<String, String, Boolean> rejectFriend(String args[]) {
+	public AsyncTask<String, String, Boolean> rejectFriend(String args) {
 		mCall = USER_DEFRIEND;
 		return execute(args);
 	}
 	
-	public AsyncTask<String, String, Boolean> acceptFriend(String args[]) {
+	public AsyncTask<String, String, Boolean> acceptFriend(String args) {
 		mCall = USER_ACCEPTFRIEND;
 		return execute(args);
 	}
+	
 	
 	public static int resolveMessage(int call, int response) {
 		switch(response) {
