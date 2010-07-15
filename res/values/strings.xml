@@ -5,6 +5,8 @@
 	<string name="label_login">Login</string>
 	<string name="label_create">I\'m new</string>
 	<string name="label_ok">OK</string>
+	<string name="label_loading">Loading...</string>
+	
 	<string name="label_game_pending">Waiting on players</string>
 	<string name="label_game_completed">Completed</string>
 	<string name="label_nextup">Next up: %s</string>
@@ -28,6 +30,7 @@
 	
 	<string name="label_games">Games</string>
 	<string name="label_friends">Friends</string>
+	
 
     <string name="hint_email">Email</string> 
     <string name="hint_password">Password</string> 
