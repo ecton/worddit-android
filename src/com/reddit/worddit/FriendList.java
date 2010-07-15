@@ -5,10 +5,11 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.reddit.worddit.adapters.FriendListAdapter;
@@ -23,6 +24,8 @@ public class FriendList extends ListActivity implements APICallback {
 	protected Friend[] mFriends;
 	protected Session mSession;
 	
+	public static final int ADDFRIEND_ID = Menu.FIRST+1;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -34,6 +37,7 @@ public class FriendList extends ListActivity implements APICallback {
 		
 		fetchFriends();
 	}
+
 	
 	public void onCreateContextMenu(ContextMenu menu, View v,
             						ContextMenuInfo menuInfo) {
@@ -42,6 +46,8 @@ public class FriendList extends ListActivity implements APICallback {
 		menu.setHeaderTitle(mFriends[((AdapterContextMenuInfo) menuInfo).position].email);
 		if(mFriends[((AdapterContextMenuInfo) menuInfo).position].isRequested()) {
 			inflater.inflate(R.menu.friend_request_menu, menu);
+		} else if (mFriends[((AdapterContextMenuInfo) menuInfo).position].isActive()) {
+			inflater.inflate(R.menu.friend_active_menu, menu);
 		}
 	}
 
@@ -53,6 +59,12 @@ public class FriendList extends ListActivity implements APICallback {
 				return true;
 			case R.id.friend_reject:
 				new APICall(this, mSession).rejectFriend(new String[]{mFriends[info.position].id});
+				return true;
+			case R.id.friend_game_request:
+				// TODO: Request game
+				return true;
+			case R.id.friend_message:
+				//TODO: Message friend
 				return true;
 			default:
 				return super.onContextItemSelected(item);

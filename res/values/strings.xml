@@ -21,6 +21,9 @@
 	<string name="label_friend_accept">Accept Friend</string>
 	<string name="label_friend_reject">Reject Friend</string>
 	
+	<string name="label_friend_message">Message Friend</string>
+	<string name="label_friend_game_request">Request Game</string>
+	
 	<string name="label_games">Games</string>
 	<string name="label_friends">Friends</string>
 
