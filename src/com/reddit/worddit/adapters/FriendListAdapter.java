@@ -1,40 +1,34 @@
 package com.reddit.worddit.adapters;
 
-import com.reddit.worddit.R;
-import com.reddit.worddit.api.response.Friend;
-
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-public class FriendListAdapter extends BaseAdapter {
+import com.reddit.worddit.R;
+import com.reddit.worddit.api.APICall;
+import com.reddit.worddit.api.APICallback;
+import com.reddit.worddit.api.Session;
+import com.reddit.worddit.api.response.Friend;
+
+public class FriendListAdapter extends SessionListAdapter {
 	protected Friend[] mFriends;
-	protected LayoutInflater mInflater;
-	protected Context mContext;
-	
 	private int mEmailField, mStatusField; 
 	
-	public FriendListAdapter(Context ctx, Friend[] friends) {
-		mFriends = friends;
-		mInflater = (LayoutInflater)ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		mContext = ctx;
-		mEmailField = R.id.item_friend_email;
-		mStatusField = R.id.item_friend_status;
+	public FriendListAdapter(Context ctx, Session session) {
+		this(ctx,session,R.id.item_friend_email, R.id.item_friend_status);
 	}
 	
-	public FriendListAdapter(Context ctx, Friend[] friends, 
+	public FriendListAdapter(Context ctx, Session session,
 			int emailField, int statusField) {
-		this(ctx, friends);
+		super(ctx, session);
 		mEmailField = emailField;
 		mStatusField = statusField;
 	}
 
 	@Override
-	public int getCount() {
-		return mFriends.length;
+	public int getItemCount() {
+		return (mFriends == null) ? 0 : mFriends.length;
 	}
 
 	@Override
@@ -49,10 +43,9 @@ public class FriendListAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	protected View getItemView(int position, View convertView, ViewGroup parent) {
 		View friendItem;
 		Friend friendForView = mFriends[position];
-		
 		
 		if(convertView == null) {
 			friendItem = mInflater.inflate(R.layout.item_frienditem, null);
@@ -76,6 +69,24 @@ public class FriendListAdapter extends BaseAdapter {
 		}
 		
 		return friendItem;
+	}
+
+	@Override
+	protected void fetchData(APICallback callback) {
+		APICall task = new APICall(callback, mSession);
+		task.getFriends();
+	}
+
+	@Override
+	protected View getLoadingView() {
+		return mInflater.inflate(R.layout.item_loadingitem, null);
+	}
+
+	@Override
+	protected void onFetchComplete(boolean result, APICall task) {
+		if(result == true) {
+			mFriends = (Friend[]) task.getPayload();
+		}
 	}
 
 }

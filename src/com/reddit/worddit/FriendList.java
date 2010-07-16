@@ -99,7 +99,7 @@ public class FriendList extends ListActivity implements APICallback {
 			if(task.getCall() == APICall.USER_FRIENDS) {
 				mFriends = (Friend[]) task.getPayload();
 			
-				setListAdapter(new FriendListAdapter(this, mFriends, R.id.item_friend_email, R.id.item_friend_status));
+				setListAdapter(new FriendListAdapter(this, mSession, R.id.item_friend_email, R.id.item_friend_status));
 			} else if(task.getCall() == APICall.USER_ACCEPTFRIEND || task.getCall() == APICall.USER_DEFRIEND) {
 				new APICall(this, mSession).getFriends(); // Way too inefficient, but temporarily gets the job done.
 			}

@@ -1,12 +1,9 @@
 package com.reddit.worddit.adapters;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import android.content.Context;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.reddit.worddit.R;
@@ -15,14 +12,8 @@ import com.reddit.worddit.api.APICallback;
 import com.reddit.worddit.api.Session;
 import com.reddit.worddit.api.response.Game;
 
-public class GameListAdapter extends BaseAdapter {
+public class GameListAdapter extends SessionListAdapter {
 	protected Game[] mGames;
-	protected LayoutInflater mInflater;
-	protected Context mContext;
-	protected Session mSession;
-	protected AtomicBoolean mLoading = new AtomicBoolean(false);
-	protected View mLoadingView;
-	
 	private int mStatusField, mNextPlayerField, mLastMoveField; 
 	
 	public GameListAdapter(Context ctx, Session session) {
@@ -31,37 +22,15 @@ public class GameListAdapter extends BaseAdapter {
 	
 	public GameListAdapter(Context ctx, Session session,
 			int statusField, int nextPlayerField, int lastMoveField) {
-		mSession = session;
-		mContext = ctx;
-		mInflater = (LayoutInflater)ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		mStatusField = statusField;
-		mNextPlayerField = nextPlayerField;
-		mLastMoveField = lastMoveField;
-		
-		fetchGames();
-	}
-	
-	public GameListAdapter(Context ctx, Game[] games) {
-		this(ctx,games,0,R.id.item_game_nextup,R.id.item_game_lastplay);
-	}
-	
-	public GameListAdapter(Context ctx, Game[] games, 
-			int statusField, int nextPlayerField, int lastMoveField) {
-		mGames = games;
-		mContext = ctx;
-		mInflater = (LayoutInflater)ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		super(ctx, session);
 		mStatusField = statusField;
 		mNextPlayerField = nextPlayerField;
 		mLastMoveField = lastMoveField;
 	}
-
+	
 	@Override
-	public int getCount() {
-		if(mLoading.get() == true || mGames == null) {
-			return 1;
-		}
-		
-		return mGames.length;
+	public int getItemCount() {
+		return (mGames == null) ? 0 : mGames.length;
 	}
 
 	@Override
@@ -71,8 +40,11 @@ public class GameListAdapter extends BaseAdapter {
 
 	@Override
 	public long getItemId(int n) {
-		if(mLoading.get() == true) {
+		if(isFetching()) {
 			if(n == 0) return 1;
+			return 0;
+		}
+		else if(mGames == null) {
 			return 0;
 		}
 		
@@ -81,45 +53,29 @@ public class GameListAdapter extends BaseAdapter {
 	}
 	
 	protected View getLoadingView() {
-		if(mLoadingView == null) {
-			mLoadingView = mInflater.inflate(R.layout.item_loadingitem, null);
-		}
-		
-		return mLoadingView;
+		return mInflater.inflate(R.layout.item_loadingitem, null);
 	}
 	
-	protected void fetchGames() {
-		APICall task = new APICall(new APICallback() {
-			@Override
-			public void onCallComplete(boolean success, APICall task) {
-				if(success) {
-					mGames = (Game[]) task.getPayload();
-					GameListAdapter.this.notifyDataSetChanged();
-				}
-				
-				mLoading.set(false);
-			}
-		},
-		mSession);
-		
-		mLoading.set(true);
+	protected void fetchData(APICallback callback) {
+		APICall task = new APICall(callback, mSession);
 		task.getGames();
+	}
+	
+	@Override
+	protected void onFetchComplete(boolean result, APICall task) {
+		if(result == true) {
+			mGames = (Game[]) task.getPayload();
+		}
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	protected View getItemView(int position, View convertView, ViewGroup parent) {
 		View gameItem;
 
-		// Stick a loading view in there if we're still fetchin' em
-		if(mLoading.get() == true) {
-			gameItem = getLoadingView();
-			return gameItem;
-		}
-		
 		// TODO: Case where mGames == null or mGames.length == 0 ?
 		
 		// Replace if convertView is null or it's still using the loading view
-		if(convertView == null || convertView == getLoadingView()) {
+		if(convertView == null) {
 			gameItem = mInflater.inflate(R.layout.item_gameitem, null);
 		} else {
 			gameItem = convertView;
@@ -173,5 +129,6 @@ public class GameListAdapter extends BaseAdapter {
 		
 		return gameItem;
 	}
+
 
 }
