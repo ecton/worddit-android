@@ -3,6 +3,7 @@
     <string name="app_name">Worddit</string>
 
 	<string name="label_login">Login</string>
+	<string name="label_search">Search</string>
 	<string name="label_create">I\'m new</string>
 	<string name="label_ok">OK</string>
 	<string name="label_loading">Loading...</string>
@@ -26,6 +27,7 @@
 	<string name="label_friend_message">Message Friend</string>
 	<string name="label_friend_game_request">Request Game</string>
 	
+	<string name="label_game_add">New Game</string>
 	<string name="label_friend_add">Add Friend</string>
 	
 	<string name="label_games">Games</string>

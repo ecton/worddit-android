@@ -28,7 +28,7 @@ public class Session implements Parcelable {
 	public static final String TAG = "Session";
 	
 	/** The default, official Worddit server */
-	public static final String API_URL = "http://api.dev.worddit.org";
+	public static final String API_URL = "http://10.0.2.2:4567/api";//"http://api.dev.worddit.org";
 	
 	/** The URL of the server we are working with */
 	private URL mURL;
@@ -149,9 +149,9 @@ public class Session implements Parcelable {
 	}
 	
 	public Profile findUser(String id) throws IOException {
-		HttpURLConnection conn = get(String.format(Worddit.PATH_USER_FIND,id));
+		HttpURLConnection conn = get(String.format(Worddit.PATH_USER_FIND, id));
 		if(getLastResponse() != Worddit.SUCCESS) return null;
-		return castJson(conn,Profile.class);
+		return castJson(conn, Profile.class);
 	}
 	
 	public boolean befriend(String id) throws IOException {

@@ -4,12 +4,14 @@ package com.reddit.worddit;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.reddit.worddit.adapters.FriendListAdapter;
@@ -23,6 +25,9 @@ public class FriendList extends ListActivity implements APICallback {
 	
 	protected Friend[] mFriends;
 	protected Session mSession;
+	
+	private static final int FIND_FRIEND	= 1,
+							 ADD_FRIEND		= 2;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -37,7 +42,9 @@ public class FriendList extends ListActivity implements APICallback {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 		case R.id.friend_add:
-			//TODO: add friend
+			Intent intent = new Intent(this, com.reddit.worddit.FriendFind.class);
+			intent.putExtra(Constants.EXTRA_SESSION, mSession);
+		    startActivityForResult(intent, FIND_FRIEND);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -104,5 +111,34 @@ public class FriendList extends ListActivity implements APICallback {
 				new APICall(this, mSession).getFriends(); // Way too inefficient, but temporarily gets the job done.
 			}
 		}
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data){
+	    switch (requestCode) {
+	    	case ADD_FRIEND:
+	    		if (resultCode == RESULT_CANCELED) {
+	                Log.i("FriendList.java", "Add Friend Failed");
+	                Toast.makeText(getApplicationContext(), "Add Friend Failed", Toast.LENGTH_SHORT).show();
+	            } else {
+	    			new APICall(this, mSession).getFriends(); // Way too inefficient, but temporarily gets the job done.
+	            } break;
+	    	case FIND_FRIEND:
+	            if (resultCode == RESULT_CANCELED) {
+	                Log.i("FriendList.java", "Find Friend Failed");
+	                Toast.makeText(getApplicationContext(), "Invalid E-mail", Toast.LENGTH_SHORT).show();
+	            } else {
+	            	Bundle b = data.getBundleExtra("com.reddit.worddit.Profile");
+	            	
+	            	Log.i("FriendList.java", "Found Friend: " + b.getString("nickname"));
+	            	
+	            	Intent intent = new Intent(this, com.reddit.worddit.FriendAdd.class);
+	    			intent.putExtra(Constants.EXTRA_SESSION, mSession);
+	    			intent.putExtra("com.reddit.worddit.ProfileID", b.getString("id"));
+	    		    startActivityForResult(intent, ADD_FRIEND);
+	            } break;
+	        default:
+	            break;
+	    }
 	}
 }

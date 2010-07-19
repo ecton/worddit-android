@@ -13,6 +13,8 @@
         </activity>
     <activity android:name="com.reddit.worddit.GameList" />
     <activity android:name="com.reddit.worddit.FriendList" />
+    <activity android:name="com.reddit.worddit.FriendAdd" />
+    <activity android:name="com.reddit.worddit.FriendFind" android:theme="@android:style/Theme.Dialog" />
     <activity android:name="com.reddit.worddit.UserHome" />
 </application>
 <uses-permission android:name="android.permission.INTERNET"></uses-permission>

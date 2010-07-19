@@ -1,7 +1,6 @@
 package com.reddit.worddit.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -14,6 +13,7 @@ import com.reddit.worddit.api.response.Game;
 
 public class GameListAdapter extends SessionListAdapter {
 	protected Game[] mGames;
+	@SuppressWarnings("unused")
 	private int mStatusField, mNextPlayerField, mLastMoveField; 
 	
 	public GameListAdapter(Context ctx, Session session) {
