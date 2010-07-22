@@ -88,5 +88,20 @@ public class FriendListAdapter extends SessionListAdapter {
 			mFriends = (Friend[]) task.getPayload();
 		}
 	}
+	
+	public void acceptFriend(int position) {
+		markUpdating(position);
+		Friend friend = getItem(position);
+		new APICall((APICallback) mContext, mSession).acceptFriend(friend.id);
+		
+	}
+	
+	public void removeFriend(int position) {
+		markUpdating(position);
+		Friend friend = getItem(position);
+		new APICall((APICallback) mContext, mSession).rejectFriend(friend.id);
+		
+	}
+
 
 }

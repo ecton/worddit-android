@@ -26,6 +26,7 @@
 	
 	<string name="label_friend_message">Message Friend</string>
 	<string name="label_friend_game_request">Request Game</string>
+	<string name="label_friend_remove">Remove Friend</string>
 	
 	<string name="label_game_add">New Game</string>
 	<string name="label_friend_add">Add Friend</string>
@@ -43,6 +44,8 @@
     <string name="msg_confirm_password">Please confirm your password.</string>
     <string name="msg_setup_error">There was a setup error!</string>
     <string name="msg_communicating">Communicating with server...</string>
+    
+    <string name="msg_friend_accepted">Friend accepted!</string>
     
     <string name="msg_successful_action">Action completed successfully.</string>
     <string name="msg_fail_connection">There was a problem with the network connection.</string>

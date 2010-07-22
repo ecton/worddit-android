@@ -89,14 +89,16 @@ public abstract class SessionListAdapter extends BaseAdapter {
 		
 		mFetching.set(true);
 		mLoadingFlags = null;
-		fetchData(new APICallback() {
+		APICallback apicb = new APICallback() {
 			@Override
 			public void onCallComplete(boolean success, APICall task) {
+				onFetchComplete(success,task);
 				mFetching.set(false);
 				SessionListAdapter.this.notifyDataSetChanged();
 				mLoadingFlags = new boolean[getCount()];
-				onFetchComplete(success,task);
+				
 			}
-		});
+		};  
+		fetchData(apicb);
 	}
 }

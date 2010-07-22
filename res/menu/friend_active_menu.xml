@@ -5,4 +5,7 @@
 	  android:title="@string/label_friend_message"/>
 <item android:id="@+id/friend_game_request" 
 	  android:title="@string/label_friend_game_request"/>
+<item android:id="@+id/friend_remove"
+	  android:title="@string/label_friend_remove" />
+	  
 </menu>
