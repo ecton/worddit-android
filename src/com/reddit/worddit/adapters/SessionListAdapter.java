@@ -89,7 +89,8 @@ public abstract class SessionListAdapter extends BaseAdapter {
 		
 		mFetching.set(true);
 		mLoadingFlags = null;
-		APICallback apicb = new APICallback() {
+
+		fetchData(		new APICallback() {
 			@Override
 			public void onCallComplete(boolean success, APICall task) {
 				onFetchComplete(success,task);
@@ -98,7 +99,7 @@ public abstract class SessionListAdapter extends BaseAdapter {
 				mLoadingFlags = new boolean[getCount()];
 				
 			}
-		};  
-		fetchData(apicb);
+		});
 	}
+	
 }

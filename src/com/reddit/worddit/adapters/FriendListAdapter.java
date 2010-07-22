@@ -92,16 +92,17 @@ public class FriendListAdapter extends SessionListAdapter {
 	public void acceptFriend(int position) {
 		markUpdating(position);
 		Friend friend = getItem(position);
-		new APICall((APICallback) mContext, mSession).acceptFriend(friend.id);
+		new APICall((APICallback) mContext, mSession).acceptFriend(friend.id); // These lines I'm sure are wrong
+		// What is the APICallback object to put in here?
 		
 	}
 	
 	public void removeFriend(int position) {
 		markUpdating(position);
 		Friend friend = getItem(position);
-		new APICall((APICallback) mContext, mSession).rejectFriend(friend.id);
+		new APICall((APICallback) mContext, mSession).rejectFriend(friend.id); // Same for this
 		
 	}
-
+	
 
 }

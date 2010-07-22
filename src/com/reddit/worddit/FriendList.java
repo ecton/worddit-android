@@ -6,11 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
@@ -35,7 +35,7 @@ public class FriendList extends ListActivity implements APICallback {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.friends_options_menu, menu);
 		return true;
-		
+	
 	}
 	
 	@Override
@@ -60,31 +60,38 @@ public class FriendList extends ListActivity implements APICallback {
 		Intent i = getIntent();
 		mSession = (Session) i.getParcelableExtra(Constants.EXTRA_SESSION);
 		
-		fetchFriends();
+		setListAdapter(new FriendListAdapter(this, mSession, R.id.item_friend_email, R.id.item_friend_status));
+//		fetchFriends();
 	}
 
+	public Friend getFriendAt(int n) {
+		return (Friend)getListAdapter().getItem(n);
+	}
 	
 	public void onCreateContextMenu(ContextMenu menu, View v,
             						ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		MenuInflater inflater = getMenuInflater();
-		menu.setHeaderTitle(mFriends[((AdapterContextMenuInfo) menuInfo).position].email);
-		if(mFriends[((AdapterContextMenuInfo) menuInfo).position].isRequested()) {
+		menu.setHeaderTitle(getFriendAt(((AdapterContextMenuInfo) menuInfo).position).email);
+		if(getFriendAt(((AdapterContextMenuInfo) menuInfo).position).isRequested()) {
 			inflater.inflate(R.menu.friend_request_menu, menu);
-		} else if (mFriends[((AdapterContextMenuInfo) menuInfo).position].isActive()) {
+		} else if (getFriendAt(((AdapterContextMenuInfo) menuInfo).position).isActive()) {
 			inflater.inflate(R.menu.friend_active_menu, menu);
 		}
 	}
 
 	public boolean onContextItemSelected(MenuItem item) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		FriendListAdapter list = (FriendListAdapter) getListAdapter();
 		switch (item.getItemId()) {
 			case R.id.friend_accept:
-				new APICall(this, mSession).acceptFriend(mFriends[info.position].id);
+				list.acceptFriend(info.position);
 				return true;
 			case R.id.friend_reject:
-				new APICall(this, mSession).rejectFriend(mFriends[info.position].id);
+				list.removeFriend(info.position);
 				return true;
+			case R.id.friend_remove:
+				list.removeFriend(info.position);
 			case R.id.friend_game_request:
 				// TODO: Request game
 				return true;
@@ -94,10 +101,6 @@ public class FriendList extends ListActivity implements APICallback {
 			default:
 				return super.onContextItemSelected(item);
 		}
-	}
-
-	private void fetchFriends() {
-		new APICall(this, mSession).getFriends();
 	}
 
 	@Override
