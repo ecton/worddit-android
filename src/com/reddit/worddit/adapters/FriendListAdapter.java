@@ -41,6 +41,27 @@ public class FriendListAdapter extends SessionListAdapter {
 		Friend f = mFriends[n];
 		return f.id.hashCode();
 	}
+	
+	@Override 
+	public View getItemLoadingView(int position, View convertView, ViewGroup parent) {
+		View friendLoadingItem;
+		Friend friendForView = mFriends[position];
+		
+		if (convertView == null) {
+			friendLoadingItem = mInflater.inflate(R.layout.item_frienditem, null);
+		} else {
+			friendLoadingItem = convertView;
+		}
+		
+		TextView friendEmail = (TextView) friendLoadingItem.findViewById(mEmailField);
+		TextView friendStatus = (TextView) friendLoadingItem.findViewById(mStatusField);
+		
+		friendEmail.setText(friendForView.email);
+		friendStatus.setText(R.string.label_updating);
+		
+		return friendLoadingItem;
+		
+	}
 
 	@Override
 	protected View getItemView(int position, View convertView, ViewGroup parent) {
@@ -92,7 +113,8 @@ public class FriendListAdapter extends SessionListAdapter {
 	public void acceptFriend(int position) {
 		markUpdating(position);
 		Friend friend = getItem(position);
-		new APICall((APICallback) mContext, mSession).acceptFriend(friend.id); // These lines I'm sure are wrong
+		FriendListAdapter.this.notifyDataSetChanged();
+		new APICall(constructAPICallback(position), mSession).acceptFriend(friend.id); // These lines I'm sure are wrong
 		// What is the APICallback object to put in here?
 		
 	}
@@ -100,9 +122,39 @@ public class FriendListAdapter extends SessionListAdapter {
 	public void removeFriend(int position) {
 		markUpdating(position);
 		Friend friend = getItem(position);
-		new APICall((APICallback) mContext, mSession).rejectFriend(friend.id); // Same for this
+		FriendListAdapter.this.notifyDataSetChanged();
+		
+		new APICall(constructAPICallback(position), mSession).rejectFriend(friend.id); // Same for this
 		
 	}
 	
+	/* This might not be the best way to do this */
+	public APICallback constructAPICallback(int position) {
+		return new APICallback() {
+			
+			private int position;
+
+			@Override
+			public void onCallComplete(boolean success, APICall task) {
+				if (success) {
+					switch(task.getCall()) {
+						case APICall.USER_ACCEPTFRIEND:
+							getItem(position).status = Friend.STATUS_ACTIVE; // Okay to do this?
+					}
+					
+					markUpdated(position);
+					FriendListAdapter.this.notifyDataSetChanged();
+				}
+				
+			}
+			
+			public APICallback setPosition(int position) {
+				this.position = position;
+				return this;
+			}
+			
+			
+		}.setPosition(position);
+	}
 
 }

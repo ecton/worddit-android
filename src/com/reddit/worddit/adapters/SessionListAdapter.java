@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.TextView;
 
 import com.reddit.worddit.api.APICall;
 import com.reddit.worddit.api.APICallback;
@@ -32,6 +31,7 @@ public abstract class SessionListAdapter extends BaseAdapter {
 	abstract protected void fetchData(APICallback callback);
 	abstract public int getItemCount();
 	abstract protected View getLoadingView();
+	abstract protected View getItemLoadingView(int position, View convertView, ViewGroup parent);
 	abstract protected View getItemView(int position, View convertView, ViewGroup parent);
 	abstract protected void onFetchComplete(boolean result, APICall task);
 	
@@ -55,10 +55,7 @@ public abstract class SessionListAdapter extends BaseAdapter {
 			return mLoadingView;
 		}
 		else if(mLoadingFlags != null && position < mLoadingFlags.length && mLoadingFlags[position] == true) {
-			// TODO: Fetching single item case.
-			TextView tv = new TextView(mContext);
-			tv.setText("TODO: Make single item load");
-			return tv;
+			return getItemLoadingView(position, convertView, parent);
 		}
 		else if(convertView == mLoadingView) {
 			return getItemView(position, null, parent);
@@ -90,7 +87,7 @@ public abstract class SessionListAdapter extends BaseAdapter {
 		mFetching.set(true);
 		mLoadingFlags = null;
 
-		fetchData(		new APICallback() {
+		fetchData(new APICallback() {
 			@Override
 			public void onCallComplete(boolean success, APICall task) {
 				onFetchComplete(success,task);

@@ -67,6 +67,11 @@ public class GameListAdapter extends SessionListAdapter {
 			mGames = (Game[]) task.getPayload();
 		}
 	}
+	
+	@Override
+	protected View getItemLoadingView(int position, View convertView, ViewGroup parent) {
+		return convertView;
+	}
 
 	@Override
 	protected View getItemView(int position, View convertView, ViewGroup parent) {

@@ -34,7 +34,8 @@
 	<string name="label_games">Games</string>
 	<string name="label_friends">Friends</string>
 	
-
+	<string name="label_updating">Updating...</string>
+	
     <string name="hint_email">Email</string> 
     <string name="hint_password">Password</string> 
     <string name="hint_password_confirm">Password (confirm)</string> 
