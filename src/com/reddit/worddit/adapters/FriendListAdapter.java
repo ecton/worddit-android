@@ -127,6 +127,7 @@ public class FriendListAdapter extends SessionListAdapter {
 		
 	}
 	
+	
 	/* This might not be the best way to do this */
 	public APICallback constructAPICallback(int position) {
 		return new APICallback() {
@@ -135,13 +136,19 @@ public class FriendListAdapter extends SessionListAdapter {
 
 			@Override
 			public void onCallComplete(boolean success, APICall task) {
+				markUpdated(position);
+				
 				if (success) {
 					switch(task.getCall()) {
 						case APICall.USER_ACCEPTFRIEND:
-							getItem(position).status = Friend.STATUS_ACTIVE; // Okay to do this?
+							getItem(position).status = Friend.STATUS_ACTIVE; break; // Okay to do this?
+						case APICall.USER_DEFRIEND:
+							removeFriendFromList(position); break;
+						default:
+							break;
 					}
 					
-					markUpdated(position);
+					
 					FriendListAdapter.this.notifyDataSetChanged();
 				}
 				
@@ -154,6 +161,26 @@ public class FriendListAdapter extends SessionListAdapter {
 			
 			
 		}.setPosition(position);
+	}
+	
+	private Friend removeFriendFromList(int position) {
+		// To remove the friend from the local copy
+		// How do we update mLoadingFlags[]?
+		Friend removeFriend = getItem(position);
+		Friend[] newFriends = new Friend[getItemCount()-1];
+		int j = 0;
+		
+		for(int i = 0; i<getItemCount(); i++) {
+			if (i!=position) {
+				newFriends[j] = mFriends[i];
+				j++;
+			}
+		}
+		
+		mFriends = newFriends;
+		
+		return removeFriend;
+		
 	}
 
 }
