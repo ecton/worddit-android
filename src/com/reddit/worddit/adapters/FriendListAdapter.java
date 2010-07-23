@@ -114,8 +114,7 @@ public class FriendListAdapter extends SessionListAdapter {
 		markUpdating(position);
 		Friend friend = getItem(position);
 		FriendListAdapter.this.notifyDataSetChanged();
-		new APICall(constructAPICallback(position), mSession).acceptFriend(friend.id); // These lines I'm sure are wrong
-		// What is the APICallback object to put in here?
+		new APICall(constructAPICallback(position), mSession).acceptFriend(friend.id);
 		
 	}
 	
@@ -124,7 +123,7 @@ public class FriendListAdapter extends SessionListAdapter {
 		Friend friend = getItem(position);
 		FriendListAdapter.this.notifyDataSetChanged();
 		
-		new APICall(constructAPICallback(position), mSession).rejectFriend(friend.id); // Same for this
+		new APICall(constructAPICallback(position), mSession).rejectFriend(friend.id);
 		
 	}
 	
