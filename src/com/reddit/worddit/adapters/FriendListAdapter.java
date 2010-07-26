@@ -111,7 +111,7 @@ public class FriendListAdapter extends SessionListAdapter {
 	}
 	
 	public void acceptFriend(int position) {
-		markUpdating(position);
+		setUpdating(position,true);
 		Friend friend = getItem(position);
 		FriendListAdapter.this.notifyDataSetChanged();
 		new APICall(constructAPICallback(position), mSession).acceptFriend(friend.id);
@@ -119,7 +119,7 @@ public class FriendListAdapter extends SessionListAdapter {
 	}
 	
 	public void removeFriend(int position) {
-		markUpdating(position);
+		setUpdating(position,true);
 		Friend friend = getItem(position);
 		FriendListAdapter.this.notifyDataSetChanged();
 		
@@ -136,7 +136,7 @@ public class FriendListAdapter extends SessionListAdapter {
 
 			@Override
 			public void onCallComplete(boolean success, APICall task) {
-				markUpdated(position);
+				setUpdating(position,false);
 				
 				if (success) {
 					switch(task.getCall()) {

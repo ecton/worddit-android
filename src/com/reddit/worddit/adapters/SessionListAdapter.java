@@ -42,7 +42,7 @@ public abstract class SessionListAdapter extends BaseAdapter {
 	private AtomicBoolean mFetching = new AtomicBoolean(false);
 	
 	/** These flags should be set to "true" when an item in the list is being operated upon */
-	private boolean mLoadingFlags[];
+	private boolean mUpdatingFlags[];
 	
 	/** The View we display when we are busy fetching the data */
 	private View mLoadingView;
@@ -148,7 +148,7 @@ public abstract class SessionListAdapter extends BaseAdapter {
 			}
 			return mLoadingView;
 		}
-		else if(mLoadingFlags != null && position < mLoadingFlags.length && mLoadingFlags[position] == true) {
+		else if(mUpdatingFlags != null && position < mUpdatingFlags.length && mUpdatingFlags[position] == true) {
 			return getItemLoadingView(position, convertView, parent);
 		}
 		else if(convertView == mLoadingView) {
@@ -161,7 +161,7 @@ public abstract class SessionListAdapter extends BaseAdapter {
 	/**
 	 * Checks if this object is fetching its payload.
 	 * This method is atomic.
-	 * @return
+	 * @return boolean representing if we are fetching or not
 	 */
 	protected boolean isFetching() {
 		return mFetching.get();
@@ -169,23 +169,20 @@ public abstract class SessionListAdapter extends BaseAdapter {
 	
 	/**
 	 * Marks the item at <code>position</code> as being updated by a background task.
-	 * @param position the position of item to be marked as updating 
+	 * @param position the position of item to be marked as updating
+	 * @param status the new status of the item
 	 */
-	protected void markUpdating(int position) {
-		mLoadingFlags[position] = true;
+	protected void setUpdating(int position, boolean status) {
+		mUpdatingFlags[position] = status;
 	}
 	
-	protected void markUpdated(int position) {
-		mLoadingFlags[position] = false;
-	}
-
 	/**
 	 * Gets the updating flag for the given item position.
 	 * @param position the position of the flag to check
 	 * @return the flag at the given position
 	 */
-	protected boolean isUpdating(int position) {
-		return mLoadingFlags[position];
+	protected boolean getUpdating(int position) {
+		return mUpdatingFlags[position];
 	}
 	
 	/**
@@ -196,7 +193,7 @@ public abstract class SessionListAdapter extends BaseAdapter {
 		if(mFetching.get() == true) return;
 		
 		mFetching.set(true);
-		mLoadingFlags = null;
+		mUpdatingFlags = null;
 
 		fetchData(new APICallback() {
 			@Override
@@ -206,7 +203,7 @@ public abstract class SessionListAdapter extends BaseAdapter {
 				SessionListAdapter.this.notifyDataSetChanged();
 				
 				// Adjust array sizes.
-				mLoadingFlags = new boolean[getCount()];
+				mUpdatingFlags = new boolean[getCount()];
 			}
 		});
 	}
