@@ -1,5 +1,8 @@
 package com.reddit.worddit.adapters;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +15,7 @@ import com.reddit.worddit.api.Session;
 import com.reddit.worddit.api.response.Friend;
 
 public class FriendListAdapter extends SessionListAdapter {
-	protected Friend[] mFriends;
+	protected ArrayList<Friend> mFriends = new ArrayList<Friend>( );
 	private int mEmailField, mStatusField; 
 	
 	public FriendListAdapter(Context ctx, Session session) {
@@ -28,24 +31,24 @@ public class FriendListAdapter extends SessionListAdapter {
 
 	@Override
 	public int getItemCount() {
-		return (mFriends == null) ? 0 : mFriends.length;
+		return (mFriends == null) ? 0 : mFriends.size();
 	}
 
 	@Override
 	public Friend getItem(int n) {
-		return mFriends[n];
+		return mFriends.get(n);
 	}
 
 	@Override
 	public long getItemId(int n) {
-		Friend f = mFriends[n];
+		Friend f = mFriends.get(n);
 		return f.id.hashCode();
 	}
 	
 	@Override 
 	public View getItemLoadingView(int position, View convertView, ViewGroup parent) {
 		View friendLoadingItem;
-		Friend friendForView = mFriends[position];
+		Friend friendForView = mFriends.get(position);
 		
 		if (convertView == null) {
 			friendLoadingItem = mInflater.inflate(R.layout.item_frienditem, null);
@@ -66,7 +69,7 @@ public class FriendListAdapter extends SessionListAdapter {
 	@Override
 	protected View getItemView(int position, View convertView, ViewGroup parent) {
 		View friendItem;
-		Friend friendForView = mFriends[position];
+		Friend friendForView = mFriends.get(position);
 		
 		if(convertView == null) {
 			friendItem = mInflater.inflate(R.layout.item_frienditem, null);
@@ -106,81 +109,67 @@ public class FriendListAdapter extends SessionListAdapter {
 	@Override
 	protected void onFetchComplete(boolean result, APICall task) {
 		if(result == true) {
-			mFriends = (Friend[]) task.getPayload();
+			Friend friends[] = (Friend[]) task.getPayload();
+			mFriends = new ArrayList<Friend>(Arrays.asList(friends));
 		}
 	}
 	
-	public void acceptFriend(int position) {
+	public void acceptFriend(final int position) {
 		setUpdating(position,true);
 		Friend friend = getItem(position);
-		FriendListAdapter.this.notifyDataSetChanged();
-		new APICall(constructAPICallback(position), mSession).acceptFriend(friend.id);
 		
-	}
-	
-	public void removeFriend(int position) {
-		setUpdating(position,true);
-		Friend friend = getItem(position);
+		// Force the list to show the updating view
 		FriendListAdapter.this.notifyDataSetChanged();
 		
-		new APICall(constructAPICallback(position), mSession).rejectFriend(friend.id);
-		
-	}
-	
-	
-	/* This might not be the best way to do this */
-	public APICallback constructAPICallback(int position) {
-		return new APICallback() {
-			
-			private int position;
-
-			@Override
-			public void onCallComplete(boolean success, APICall task) {
-				setUpdating(position,false);
-				
-				if (success) {
-					switch(task.getCall()) {
-						case APICall.USER_ACCEPTFRIEND:
-							getItem(position).status = Friend.STATUS_ACTIVE; break; // Okay to do this?
-						case APICall.USER_DEFRIEND:
-							removeFriendFromList(position); break;
-						default:
-							break;
+		// Build our API call
+		APICall task = new APICall(
+				new APICallback() {
+					@Override
+					public void onCallComplete(boolean success, APICall task) {
+						setUpdating(position,false);
+						if(success) {
+							getItem(position).status = Friend.STATUS_ACTIVE;
+						}
+						FriendListAdapter.this.notifyDataSetChanged();
 					}
-					
-					
-					FriendListAdapter.this.notifyDataSetChanged();
-				}
-				
-			}
-			
-			public APICallback setPosition(int position) {
-				this.position = position;
-				return this;
-			}
-			
-			
-		}.setPosition(position);
+				},
+				mSession);
+		
+		task.acceptFriend(friend.id);
 	}
 	
-	private Friend removeFriendFromList(int position) {
-		// To remove the friend from the local copy
-		// How do we update mLoadingFlags[]?
+	public void removeFriend(final int position) {
+		setUpdating(position,true);
+		Friend friend = getItem(position);
+		
+		// Forces redisplay to show the updating item.
+		FriendListAdapter.this.notifyDataSetChanged();
+		
+		// Build our API call
+		APICall task = new APICall(
+					new APICallback() {
+						@Override
+						public void onCallComplete(boolean success, APICall task) {
+							setUpdating(position, false);
+							if(success) {
+								removeFriendFromList(position);
+							}
+							FriendListAdapter.this.notifyDataSetChanged();
+						}
+					}, mSession);
+		
+		task.rejectFriend(friend.id);
+	}
+	
+	/**
+	 * Removes a Friend object from memory.
+	 * @param position the position of the Friend to remove
+	 * @return the removed Friend
+	 */
+	protected Friend removeFriendFromList(int position) {
 		Friend removeFriend = getItem(position);
-		Friend[] newFriends = new Friend[getItemCount()-1];
-		int j = 0;
-		
-		for(int i = 0; i<getItemCount(); i++) {
-			if (i!=position) {
-				newFriends[j] = mFriends[i];
-				j++;
-			}
-		}
-		
-		mFriends = newFriends;
-		
+		mFriends.remove(position);
 		return removeFriend;
-		
 	}
 
 }
