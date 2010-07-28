@@ -84,8 +84,10 @@ public class FriendsActivity extends ListActivity {
 			@Override
 			public void onClick(View v) {
 				TextView term = (TextView) findViewById(R.id.friends_searchTerm);
+				FriendListAdapter adapter = (FriendListAdapter) getListAdapter();
 				findViewById(R.id.friends_searchpane).setVisibility(View.GONE);
 				term.setText("");
+				adapter.setFilter("");
 			}
 		});
 		
