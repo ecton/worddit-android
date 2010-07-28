@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
@@ -66,6 +67,11 @@ public class FriendsActivity extends ListActivity {
 		return (Friend)getListAdapter().getItem(n);
 	}
 	
+	public String getSearchTerm() {
+		EditText tv = (EditText) findViewById(R.id.friends_searchTerm);
+		return tv.getEditableText().toString();
+	}
+	
 	private void setupListeners() {
 		findViewById(R.id.friends_searchButton).setOnClickListener(new OnClickListener() {
 			@Override
@@ -80,14 +86,15 @@ public class FriendsActivity extends ListActivity {
 				TextView term = (TextView) findViewById(R.id.friends_searchTerm);
 				findViewById(R.id.friends_searchpane).setVisibility(View.GONE);
 				term.setText("");
-				// TODO: Remove any filter that may exist.bob
 			}
 		});
 		
 		findViewById(R.id.friends_searchTerm).setOnKeyListener(new OnKeyListener() {
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				// TODO: Update filter for friend list when it gets done.
+				FriendListAdapter adapter = (FriendListAdapter) getListAdapter();
+				String filter = getSearchTerm();
+				adapter.setFilter(filter);
 				return false;
 			}
 		});
