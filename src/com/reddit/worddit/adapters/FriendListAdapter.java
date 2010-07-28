@@ -16,7 +16,10 @@ import com.reddit.worddit.api.response.Friend;
 
 public class FriendListAdapter extends SessionListAdapter {
 	protected ArrayList<Friend> mFriends = new ArrayList<Friend>( );
+	protected ArrayList<Friend> mFiltered = mFriends;
 	private int mEmailField, mStatusField; 
+	
+	protected String mFilter;
 	
 	public FriendListAdapter(Context ctx, Session session) {
 		this(ctx,session,R.id.item_friend_email, R.id.item_friend_status);
@@ -28,27 +31,36 @@ public class FriendListAdapter extends SessionListAdapter {
 		mEmailField = emailField;
 		mStatusField = statusField;
 	}
+	
+	public void setFilter(String filter) {
+		// Do nothing if the filter hasn't changed.
+		if(filter.equalsIgnoreCase(mFilter)) return;
+		
+		mFilter = filter;
+		mFiltered = getFilteredList();
+		notifyDataSetChanged();
+	}
 
 	@Override
 	public int getItemCount() {
-		return (mFriends == null) ? 0 : mFriends.size();
+		return (mFiltered == null) ? 0 : mFiltered.size();
 	}
 
 	@Override
 	public Friend getItem(int n) {
-		return mFriends.get(n);
+		return mFiltered.get(n);
 	}
 
 	@Override
 	public long getItemId(int n) {
-		Friend f = mFriends.get(n);
+		Friend f = mFiltered.get(n);
 		return f.id.hashCode();
 	}
 	
 	@Override 
 	public View getItemLoadingView(int position, View convertView, ViewGroup parent) {
 		View friendLoadingItem;
-		Friend friendForView = mFriends.get(position);
+		Friend friendForView = mFiltered.get(position);
 		
 		if (convertView == null) {
 			friendLoadingItem = mInflater.inflate(R.layout.item_frienditem, null);
@@ -69,7 +81,7 @@ public class FriendListAdapter extends SessionListAdapter {
 	@Override
 	protected View getItemView(int position, View convertView, ViewGroup parent) {
 		View friendItem;
-		Friend friendForView = mFriends.get(position);
+		Friend friendForView = mFiltered.get(position);
 		
 		if(convertView == null) {
 			friendItem = mInflater.inflate(R.layout.item_frienditem, null);
@@ -111,6 +123,8 @@ public class FriendListAdapter extends SessionListAdapter {
 		if(result == true) {
 			Friend friends[] = (Friend[]) task.getPayload();
 			mFriends = new ArrayList<Friend>(Arrays.asList(friends));
+			mFilter = null;
+			mFiltered = mFriends;
 		}
 	}
 	
@@ -168,8 +182,32 @@ public class FriendListAdapter extends SessionListAdapter {
 	 */
 	protected Friend removeFriendFromList(int position) {
 		Friend removeFriend = getItem(position);
-		mFriends.remove(position);
+		mFriends.remove(removeFriend);
+		mFiltered = getFilteredList();
 		return removeFriend;
 	}
 
+	/**
+	 * Gets the filtered list of friends for this ListAdapter.
+	 * Currently the filter matches when the filtering term
+	 * is contains (case-insensitive) somewhere in the email field.
+	 * @return a filtered list of friends
+	 */
+	protected ArrayList<Friend> getFilteredList() {
+		// Use the default if there's no filter.
+		if(mFilter == null || mFilter.length() == 0) return mFriends;
+		
+		ArrayList<Friend> filtered = new ArrayList<Friend>();
+		
+		String filter = mFilter.toLowerCase();
+		for(Friend f : mFriends) {
+			String email = f.email.toLowerCase();
+			
+			if(email.contains(filter)) {
+				filtered.add(f);
+			}
+		}
+		
+		return filtered;
+	}
 }
