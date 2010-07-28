@@ -8,7 +8,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.TabHost;
 
-public class UserHome extends TabActivity {
+public class HomeActivity extends TabActivity {
 	
 	protected Session mSession;
 
@@ -16,7 +16,7 @@ public class UserHome extends TabActivity {
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		setContentView(R.layout.activity_userhome);
+		setContentView(R.layout.activity_home);
 		
 		Intent i = getIntent();
 		mSession = (Session) i.getParcelableExtra(Constants.EXTRA_SESSION);
@@ -29,7 +29,7 @@ public class UserHome extends TabActivity {
 		TabHost.TabSpec spec;
 		Intent intent;
 		
-		intent = new Intent(this, GameList.class);
+		intent = new Intent(this, GamesActivity.class);
 		intent.putExtra(Constants.EXTRA_SESSION, mSession);
 		spec = tabHost.newTabSpec(TAB_GAMES)
 			.setIndicator(res.getString(R.string.label_games),
@@ -37,7 +37,7 @@ public class UserHome extends TabActivity {
 			.setContent(intent);
 		tabHost.addTab(spec);
 		
-		intent = new Intent(this, FriendList.class);
+		intent = new Intent(this, FriendsActivity.class);
 		intent.putExtra(Constants.EXTRA_SESSION, mSession);
 		spec = tabHost.newTabSpec(TAB_FRIENDS)
 			.setIndicator(res.getString(R.string.label_friends),

@@ -12,7 +12,7 @@ import com.reddit.worddit.adapters.GameListAdapter;
 import com.reddit.worddit.api.Session;
 import com.reddit.worddit.api.response.Game;
 
-public class GameList extends ListActivity {
+public class GamesActivity extends ListActivity {
 	public static final String TAG = "GameList";
 	
 	protected Game[] mGames;
@@ -21,7 +21,7 @@ public class GameList extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.worddit_game_list);
+		setContentView(R.layout.activity_games);
 		
 
 		Intent i = getIntent();

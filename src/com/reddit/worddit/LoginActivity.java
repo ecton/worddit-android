@@ -19,7 +19,7 @@ import com.reddit.worddit.api.APICallback;
 import com.reddit.worddit.api.Session;
 
 
-public class WordditHome extends Activity implements APICallback {
+public class LoginActivity extends Activity implements APICallback {
 	/** Debug tag */
 	public static final String TAG = "WordditHome";
 	
@@ -221,7 +221,7 @@ public class WordditHome extends Activity implements APICallback {
 		Session s = task.getSession();
 		
 		if(success && s.isAuthenticated()) {
-			Intent i = new Intent(this, UserHome.class);
+			Intent i = new Intent(this, LoginActivity.class);
 			i.putExtra(Constants.EXTRA_SESSION, mSession);
 			startActivity(i);
 		}

@@ -20,7 +20,7 @@ import com.reddit.worddit.api.APICallback;
 import com.reddit.worddit.api.Session;
 import com.reddit.worddit.api.response.Friend;
 
-public class FriendList extends ListActivity implements APICallback {
+public class FriendsActivity extends ListActivity implements APICallback {
 	public static final String TAG = "FriendList";
 	
 	protected Friend[] mFriends;
@@ -54,7 +54,7 @@ public class FriendList extends ListActivity implements APICallback {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.worddit_friend_list);
+		setContentView(R.layout.activity_friends);
 		registerForContextMenu(getListView());
 
 		Intent i = getIntent();

@@ -28,7 +28,7 @@ public class FriendFind extends Activity implements APICallback {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.friend_find);
+		setContentView(R.layout.activity_find);
 
 		Intent i = getIntent();
 		mSession = (Session) i.getParcelableExtra(Constants.EXTRA_SESSION);
