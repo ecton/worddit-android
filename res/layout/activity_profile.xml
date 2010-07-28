@@ -1,0 +1,44 @@
+<LinearLayout
+	android:id="@+id/LinearLayout01"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:padding="4dp"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<LinearLayout
+		android:id="@+id/profile_headerBlock"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content">
+		<ImageView
+			android:id="@+id/profile_avatar"
+			android:src="@drawable/ic_contact_picture"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" />
+		<LinearLayout
+			android:id="@+id/profile_titleBlock"
+			android:orientation="vertical"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+			<!-- This is the bigger text. It gets filled with an email or a nickname. -->
+			<TextView
+				android:text="@+id/profile_title"
+				android:id="@+id/profile_title"
+				android:textSize="20dp"
+				android:padding="4dp"
+				android:gravity="center_vertical"
+				android:layout_weight="1"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content" />
+				
+			<!-- This is the smaller text. It gets filled with an email in case there was already a nickname. -->
+			<TextView
+				android:text="@+id/profile_subtitle"
+				android:id="@+id/profile_subtitle"
+				android:textSize="12dp"
+				android:padding="4dp"
+				android:gravity="center_vertical"
+				android:layout_weight="1"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content" />
+		</LinearLayout>
+	</LinearLayout>
+</LinearLayout>
