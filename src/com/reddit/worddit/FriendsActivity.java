@@ -4,7 +4,6 @@ package com.reddit.worddit;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -15,16 +14,13 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.reddit.worddit.adapters.FriendListAdapter;
-import com.reddit.worddit.api.APICall;
-import com.reddit.worddit.api.APICallback;
 import com.reddit.worddit.api.Session;
 import com.reddit.worddit.api.response.Friend;
 
-public class FriendsActivity extends ListActivity implements APICallback {
+public class FriendsActivity extends ListActivity {
 	public static final String TAG = "FriendList";
 	
 	protected Friend[] mFriends;
@@ -142,16 +138,6 @@ public class FriendsActivity extends ListActivity implements APICallback {
 				return true;
 			default:
 				return super.onContextItemSelected(item);
-		}
-	}
-
-	@Override
-	public void onCallComplete(boolean success, APICall task) {
-		if(success) {
-			if(task.getCall() == APICall.USER_FRIENDS) {
-				mFriends = (Friend[]) task.getPayload();
-				setListAdapter(new FriendListAdapter(this, mSession, R.id.item_friend_email, R.id.item_friend_status));
-			}
 		}
 	}
 }
