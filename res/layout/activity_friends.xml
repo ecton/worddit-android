@@ -2,10 +2,38 @@
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent"
-	android:layout_height="wrap_content"
+	android:layout_height="fill_parent"
+	android:orientation="vertical"
 	android:id="@+id/friend_list">
 	<ListView
 		android:id="@android:id/list"
+		android:layout_weight="1"
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"></ListView>
+		android:layout_height="wrap_content" />
+	<LinearLayout
+		android:id="@+id/friends_searchpane"
+		android:orientation="horizontal"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:visibility="visible">
+		<EditText
+			android:hint="@string/hint_enterSearchTerm"
+			android:id="@+id/friends_searchTerm"
+			android:layout_weight="1"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:lines="1"
+			android:inputType="textEmailAddress"></EditText>
+		<ImageButton
+			android:id="@+id/friends_searchButton"
+			android:src="@drawable/ic_btn_search"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+		<ImageButton
+			android:id="@+id/friends_cancelButton"
+			android:src="@drawable/ic_btn_hide"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+	</LinearLayout>
+
 </LinearLayout>

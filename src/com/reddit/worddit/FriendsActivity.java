@@ -6,11 +6,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.View.OnClickListener;
+import android.view.View.OnKeyListener;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
@@ -41,10 +45,8 @@ public class FriendsActivity extends ListActivity implements APICallback {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
-		case R.id.friend_add:
-			Intent intent = new Intent(this, com.reddit.worddit.FriendFind.class);
-			intent.putExtra(Constants.EXTRA_SESSION, mSession);
-		    startActivityForResult(intent, FIND_FRIEND);
+		case R.id.friend_search:
+			findViewById(R.id.friends_searchpane).setVisibility(View.VISIBLE);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -61,11 +63,51 @@ public class FriendsActivity extends ListActivity implements APICallback {
 		mSession = (Session) i.getParcelableExtra(Constants.EXTRA_SESSION);
 		
 		setListAdapter(new FriendListAdapter(this, mSession, R.id.item_friend_email, R.id.item_friend_status));
-//		fetchFriends();
+		setupListeners();
 	}
 
 	public Friend getFriendAt(int n) {
 		return (Friend)getListAdapter().getItem(n);
+	}
+	
+	private void setupListeners() {
+		findViewById(R.id.friends_searchButton).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO: Launch ProfileActivity when it gets made.
+			}
+		});
+		
+		findViewById(R.id.friends_cancelButton).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				TextView term = (TextView) findViewById(R.id.friends_searchTerm);
+				findViewById(R.id.friends_searchpane).setVisibility(View.GONE);
+				term.setText("");
+				// TODO: Remove any filter that may exist.bob
+			}
+		});
+		
+		findViewById(R.id.friends_searchTerm).setOnKeyListener(new OnKeyListener() {
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				// TODO: Update filter for friend list when it gets done.
+				return false;
+			}
+		});
+	}
+	
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		// If a key event doesn't get handled, pass it off to the search
+		// view by default.
+		
+		// TODO: Maybe add numerics as well? I couldn't justify it yet.
+		if(keyCode >= KeyEvent.KEYCODE_A && keyCode <= KeyEvent.KEYCODE_Z) {
+			findViewById(R.id.friends_searchpane).setVisibility(View.VISIBLE);
+			findViewById(R.id.friends_searchTerm).requestFocus();
+			findViewById(R.id.friends_searchTerm).dispatchKeyEvent(event);
+		}
+		return false;
 	}
 	
 	public void onCreateContextMenu(ContextMenu menu, View v,
@@ -108,40 +150,8 @@ public class FriendsActivity extends ListActivity implements APICallback {
 		if(success) {
 			if(task.getCall() == APICall.USER_FRIENDS) {
 				mFriends = (Friend[]) task.getPayload();
-			
 				setListAdapter(new FriendListAdapter(this, mSession, R.id.item_friend_email, R.id.item_friend_status));
-			} else if(task.getCall() == APICall.USER_ACCEPTFRIEND || task.getCall() == APICall.USER_DEFRIEND) {
-				new APICall(this, mSession).getFriends(); // Way too inefficient, but temporarily gets the job done.
 			}
 		}
-	}
-	
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data){
-	    switch (requestCode) {
-	    	case ADD_FRIEND:
-	    		if (resultCode == RESULT_CANCELED) {
-	                Log.i("FriendList.java", "Add Friend Failed");
-	                Toast.makeText(getApplicationContext(), "Add Friend Failed", Toast.LENGTH_SHORT).show();
-	            } else {
-	    			new APICall(this, mSession).getFriends(); // Way too inefficient, but temporarily gets the job done.
-	            } break;
-	    	case FIND_FRIEND:
-	            if (resultCode == RESULT_CANCELED) {
-	                Log.i("FriendList.java", "Find Friend Failed");
-	                Toast.makeText(getApplicationContext(), "Invalid E-mail", Toast.LENGTH_SHORT).show();
-	            } else {
-	            	Bundle b = data.getBundleExtra("com.reddit.worddit.Profile");
-	            	
-	            	Log.i("FriendList.java", "Found Friend: " + b.getString("nickname"));
-	            	
-	            	Intent intent = new Intent(this, com.reddit.worddit.FriendAdd.class);
-	    			intent.putExtra(Constants.EXTRA_SESSION, mSession);
-	    			intent.putExtra("com.reddit.worddit.ProfileID", b.getString("id"));
-	    		    startActivityForResult(intent, ADD_FRIEND);
-	            } break;
-	        default:
-	            break;
-	    }
 	}
 }

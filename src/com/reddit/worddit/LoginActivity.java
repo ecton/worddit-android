@@ -221,7 +221,7 @@ public class LoginActivity extends Activity implements APICallback {
 		Session s = task.getSession();
 		
 		if(success && s.isAuthenticated()) {
-			Intent i = new Intent(this, LoginActivity.class);
+			Intent i = new Intent(this, HomeActivity.class);
 			i.putExtra(Constants.EXTRA_SESSION, mSession);
 			startActivity(i);
 		}

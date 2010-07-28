@@ -13,9 +13,7 @@
         </activity>
     <activity android:name="com.reddit.worddit.GamesActivity" />
     <activity android:name="com.reddit.worddit.FriendsActivity" />
-    <activity android:name="com.reddit.worddit.FriendAdd" />
-    <activity android:name="com.reddit.worddit.FriendFind" android:theme="@android:style/Theme.Dialog" />
-    <activity android:name="com.reddit.worddit.LoginActivity" />
+    <activity android:name="com.reddit.worddit.HomeActivity" />
 </application>
 <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 </manifest> 

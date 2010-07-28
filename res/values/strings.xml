@@ -29,7 +29,7 @@
 	<string name="label_friend_remove">Remove Friend</string>
 	
 	<string name="label_game_add">New Game</string>
-	<string name="label_friend_add">Add Friend</string>
+	<string name="label_friend_search">Search</string>
 	
 	<string name="label_games">Games</string>
 	<string name="label_friends">Friends</string>
@@ -39,6 +39,7 @@
     <string name="hint_email">Email</string> 
     <string name="hint_password">Password</string> 
     <string name="hint_password_confirm">Password (confirm)</string> 
+    <string name="hint_enterSearchTerm">Email, nickname...</string>
     
     <string name="msg_not_found">Could not find message ID \'%x\'.</string>
     <string name="msg_required_fields_missing">All fields are required to be filled out.</string>
