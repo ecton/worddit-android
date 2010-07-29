@@ -76,7 +76,14 @@ public class FriendsActivity extends ListActivity {
 		findViewById(R.id.friends_searchButton).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO: Launch ProfileActivity when it gets made.
+				EditText et = (EditText) findViewById(R.id.friends_searchTerm);
+				String term = et.getEditableText().toString();
+				Intent i = new Intent(FriendsActivity.this, ProfileActivity.class);
+				i.putExtra(Constants.EXTRA_SESSION, mSession);
+				i.putExtra(Constants.EXTRA_FRIENDID, term);
+				startActivity(i);
+				
+				// TODO: How do we know if in ProfileActivity they will change the friend??
 			}
 		});
 		

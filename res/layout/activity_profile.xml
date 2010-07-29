@@ -3,9 +3,11 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:padding="4dp"
+	android:orientation="vertical"
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<LinearLayout
 		android:id="@+id/profile_headerBlock"
+		android:layout_weight="1"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content">
 		<ImageView
@@ -28,8 +30,9 @@
 				android:layout_weight="1"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content" />
-				
-			<!-- This is the smaller text. It gets filled with an email in case there was already a nickname. -->
+
+			<!-- This is the smaller text. It gets filled with an email in case there 
+				was already a nickname. -->
 			<TextView
 				android:text="@+id/profile_subtitle"
 				android:id="@+id/profile_subtitle"
@@ -41,4 +44,39 @@
 				android:layout_height="wrap_content" />
 		</LinearLayout>
 	</LinearLayout>
+	<LinearLayout
+		android:id="@+id/profile_actionBlock"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+		<Button
+			android:text="@string/label_request_friend"
+			android:id="@+id/friends_btnRequestFriend"
+			android:visibility="gone"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+			
+		<Button
+			android:text="@string/label_accept_friend"
+			android:id="@+id/friends_btnAcceptFriend"
+			android:visibility="gone"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+			
+		<Button
+			android:text="@string/label_friend_pending"
+			android:id="@+id/friends_btnPending"
+			android:visibility="gone"
+			android:enabled="false"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+			
+		<Button
+			android:text="@string/label_reject_friend"
+			android:id="@+id/friends_btnRejectFriend"
+			android:visibility="gone"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+	</LinearLayout>
+
 </LinearLayout>
