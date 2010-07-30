@@ -4,6 +4,8 @@ package com.reddit.worddit;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -12,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
-import android.view.View.OnKeyListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,9 +29,6 @@ public class FriendsActivity extends ListActivity {
 	protected Friend[] mFriends;
 	protected Session mSession;
 	
-	private static final int FIND_FRIEND	= 1,
-							 ADD_FRIEND		= 2;
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
@@ -67,6 +65,12 @@ public class FriendsActivity extends ListActivity {
 		
 		setListAdapter(new FriendListAdapter(this, mSession, R.id.item_friend_email, R.id.item_friend_status));
 		setupListeners();
+	}
+	
+	protected void updateFilter() {
+		FriendListAdapter adapter = (FriendListAdapter) getListAdapter();
+		String filter = getSearchTerm();
+		adapter.setFilter(filter);
 	}
 	
 	protected void showProfile(Friend friend) {
@@ -111,13 +115,21 @@ public class FriendsActivity extends ListActivity {
 			}
 		});
 		
-		findViewById(R.id.friends_searchTerm).setOnKeyListener(new OnKeyListener() {
+		EditText text = (EditText) findViewById(R.id.friends_searchTerm);
+		text.addTextChangedListener(new TextWatcher() {
 			@Override
-			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				FriendListAdapter adapter = (FriendListAdapter) getListAdapter();
-				String filter = getSearchTerm();
-				adapter.setFilter(filter);
-				return false;
+			public void afterTextChanged(Editable text) {
+				updateFilter();	
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int counter, int after) {
+				
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				
 			}
 		});
 	}
