@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.TextView;
 
 public class ProfileActivity extends Activity {
@@ -24,6 +25,7 @@ public class ProfileActivity extends Activity {
 		Intent i = getIntent();
 		mSession = (Session) i.getParcelableExtra(Constants.EXTRA_SESSION);
 		this.setContentView(R.layout.activity_profile);
+		setupListeners();
 		fetchInfo();
 	}
 	
@@ -35,7 +37,27 @@ public class ProfileActivity extends Activity {
 		restoreFromBundle(icicle);
 	}
 	
-	protected void setProfile(Profile p) {
+	protected void showFetching() {
+		findViewById(R.id.profile_bodyContainer).setVisibility(View.GONE);
+		findViewById(R.id.profile_messageContainer).setVisibility(View.VISIBLE);
+		findViewById(R.id.profile_progressBar).setVisibility(View.VISIBLE);
+		findViewById(R.id.profile_btnRetry).setVisibility(View.GONE);
+		
+		TextView msg = (TextView) findViewById(R.id.profile_message);
+		msg.setText(R.string.label_loading);
+	}
+	
+	protected void showMessage(int resId) {
+		findViewById(R.id.profile_bodyContainer).setVisibility(View.GONE);
+		findViewById(R.id.profile_messageContainer).setVisibility(View.VISIBLE);
+		findViewById(R.id.profile_progressBar).setVisibility(View.GONE);
+		findViewById(R.id.profile_btnRetry).setVisibility(View.VISIBLE);
+		
+		TextView msg = (TextView) findViewById(R.id.profile_message);
+		msg.setText(resId);
+	}
+	
+	protected void showProfile(Profile p) {
 		TextView title = (TextView) findViewById(R.id.profile_title);
 		TextView subtitle = (TextView) findViewById(R.id.profile_subtitle);
 		
@@ -54,19 +76,26 @@ public class ProfileActivity extends Activity {
 			subtitle.setVisibility(View.GONE);
 		}
 		
+		findViewById(R.id.profile_bodyContainer).setVisibility(View.VISIBLE);
+		findViewById(R.id.profile_messageContainer).setVisibility(View.GONE);
+		
 		// TODO: Friend status? Change the buttons?
 	}
 	
 	protected void fetchInfo() {
 		if(mInfoFetched == true) return;
 		
+		showFetching();
 		APICall task = new APICall(new APICallback() {
 			@Override
 			public void onCallComplete(boolean success, APICall task) {
 				mInfoFetched = success;
 				
 				if(success) {
-					setProfile((Profile) task.getPayload());
+					showProfile((Profile) task.getPayload());
+				}
+				else {
+					showMessage(task.getMessage());
 				}
 			}
 		}, mSession);
@@ -105,6 +134,15 @@ public class ProfileActivity extends Activity {
 		mAvatarUrl = (b.containsKey(AVATAR_URL)) ? b.getString(AVATAR_URL) : mAvatarUrl;
 		mInfoFetched = b.getBoolean(FETCHED_INFO);
 		mAvatarFetched = b.getBoolean(FETCHED_AVATAR);
+	}
+	
+	private void setupListeners() {
+		findViewById(R.id.profile_btnRetry).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				ProfileActivity.this.fetchInfo();
+			}
+		});
 	}
 	
 	public static final String

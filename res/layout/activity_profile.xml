@@ -1,82 +1,142 @@
 <LinearLayout
-	android:id="@+id/LinearLayout01"
+	android:id="@+id/profile_root"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:padding="4dp"
 	android:orientation="vertical"
 	xmlns:android="http://schemas.android.com/apk/res/android">
-	<LinearLayout
-		android:id="@+id/profile_headerBlock"
-		android:layout_weight="1"
+	
+	<!--
+		Block 1
+		Contains everything necessary to tell the user we're working
+		in the background.
+	 -->
+	<FrameLayout
+		android:id="@+id/profile_messageContainer"
 		android:layout_width="wrap_content"
-		android:layout_height="wrap_content">
-		<ImageView
-			android:id="@+id/profile_avatar"
-			android:src="@drawable/ic_contact_picture"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" />
+		android:layout_height="fill_parent"
+		android:layout_gravity="center_horizontal"
+		android:padding="4dp">
 		<LinearLayout
-			android:id="@+id/profile_titleBlock"
-			android:orientation="vertical"
+			android:id="@+id/profile_messageBody"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical"
+			android:orientation="vertical">
+			<LinearLayout
+				android:id="@+id/profile_messageRow"
+				android:layout_width="wrap_content"
+				android:layout_height="fill_parent"
+				android:orientation="horizontal">
+				<ProgressBar
+					android:id="@+id/profile_progressBar"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center_vertical"
+					android:layout_width="wrap_content"/>
+				<TextView
+					android:id="@+id/profile_message"
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:layout_gravity="center_vertical"
+					android:textSize="18dp"
+					android:padding="4dp"
+					android:text="@string/label_loading" />
+			</LinearLayout>
+			<Button
+				android:layout_width="130dp"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_horizontal"
+				android:id="@+id/profile_btnRetry"
+				android:text="@string/label_retry"/>
+		</LinearLayout>
+		
+	</FrameLayout>
+
+	<LinearLayout
+		android:id="@+id/profile_bodyContainer"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:padding="4dp"
+		android:visibility="gone"
+		android:orientation="vertical">
+		<LinearLayout
+			android:id="@+id/profile_headerBlock"
+			android:layout_weight="1"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content">
-			<!-- This is the bigger text. It gets filled with an email or a nickname. -->
-			<TextView
-				android:text="@+id/profile_title"
-				android:id="@+id/profile_title"
-				android:textSize="20dp"
-				android:padding="4dp"
-				android:gravity="center_vertical"
-				android:layout_weight="1"
+			<ImageView
+				android:id="@+id/profile_avatar"
+				android:src="@drawable/ic_contact_picture"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content" />
+			<LinearLayout
+				android:id="@+id/profile_titleBlock"
+				android:orientation="vertical"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content">
+				<!--
+					This is the bigger text. It gets filled with an email or a
+					nickname.
+				-->
+				<TextView
+					android:text="@+id/profile_title"
+					android:id="@+id/profile_title"
+					android:textSize="20dp"
+					android:padding="4dp"
+					android:gravity="center_vertical"
+					android:layout_weight="1"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
+
+				<!--
+					This is the smaller text. It gets filled with an email in case
+					there was already a nickname.
+				-->
+				<TextView
+					android:text="@+id/profile_subtitle"
+					android:id="@+id/profile_subtitle"
+					android:textSize="12dp"
+					android:padding="4dp"
+					android:gravity="center_vertical"
+					android:layout_weight="1"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
+			</LinearLayout>
+		</LinearLayout>
+		<LinearLayout
+			android:id="@+id/profile_actionBlock"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal">
+			<Button
+				android:text="@string/label_request_friend"
+				android:id="@+id/friends_btnRequestFriend"
+				android:visibility="gone"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content" />
 
-			<!-- This is the smaller text. It gets filled with an email in case there 
-				was already a nickname. -->
-			<TextView
-				android:text="@+id/profile_subtitle"
-				android:id="@+id/profile_subtitle"
-				android:textSize="12dp"
-				android:padding="4dp"
-				android:gravity="center_vertical"
-				android:layout_weight="1"
+			<Button
+				android:text="@string/label_accept_friend"
+				android:id="@+id/friends_btnAcceptFriend"
+				android:visibility="gone"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content" />
+
+			<Button
+				android:text="@string/label_friend_pending"
+				android:id="@+id/friends_btnPending"
+				android:visibility="gone"
+				android:enabled="false"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content" />
+
+			<Button
+				android:text="@string/label_reject_friend"
+				android:id="@+id/friends_btnRejectFriend"
+				android:visibility="gone"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content" />
 		</LinearLayout>
 	</LinearLayout>
-	<LinearLayout
-		android:id="@+id/profile_actionBlock"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal">
-		<Button
-			android:text="@string/label_request_friend"
-			android:id="@+id/friends_btnRequestFriend"
-			android:visibility="gone"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"/>
-			
-		<Button
-			android:text="@string/label_accept_friend"
-			android:id="@+id/friends_btnAcceptFriend"
-			android:visibility="gone"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"/>
-			
-		<Button
-			android:text="@string/label_friend_pending"
-			android:id="@+id/friends_btnPending"
-			android:visibility="gone"
-			android:enabled="false"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"/>
-			
-		<Button
-			android:text="@string/label_reject_friend"
-			android:id="@+id/friends_btnRejectFriend"
-			android:visibility="gone"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"/>
-	</LinearLayout>
-
 </LinearLayout>

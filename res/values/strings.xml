@@ -7,6 +7,7 @@
 	<string name="label_create">I\'m new</string>
 	<string name="label_ok">OK</string>
 	<string name="label_loading">Loading...</string>
+	<string name="label_retry">Retry</string>
 	
 	<string name="label_game_pending">Waiting on players</string>
 	<string name="label_game_completed">Completed</string>
@@ -59,5 +60,6 @@
     <string name="msg_fail_connection">There was a problem with the network connection.</string>
     <string name="msg_fail_bad_username">Invalid username or password.</string>
     <string name="msg_fail_user_exists">That user already exists.</string>
+    <string name="msg_search_no_results">Your search has no results.</string>
     <string name="msg_unknown_response">Could not understand server response. It\'s not your fault! Try again later.</string>
 </resources>

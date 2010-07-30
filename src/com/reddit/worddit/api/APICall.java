@@ -352,6 +352,7 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 		case Worddit.ERROR_NOT_FOUND:
 			switch(call) {
 			case APICall.USER_LOGIN: return R.string.msg_fail_bad_username;
+			case APICall.USER_FIND: return R.string.msg_search_no_results;
 			}
 			break;
 			
