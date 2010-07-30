@@ -71,6 +71,10 @@ public class ProfileActivity extends Activity {
 			title.setText(p.email);
 			subtitle.setVisibility(View.GONE);
 		}
+		else if(p.nickname != null && p.nickname.length() > 0) {
+			title.setText(p.nickname);
+			subtitle.setVisibility(View.GONE);
+		}
 		else {
 			title.setText(R.string.label_no_nickname);
 			subtitle.setVisibility(View.GONE);
