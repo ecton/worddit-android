@@ -167,6 +167,7 @@ public class FriendListAdapter extends SessionListAdapter {
 							setUpdating(position, false);
 							if(success) {
 								removeFriendFromList(position);
+								
 							}
 							FriendListAdapter.this.notifyDataSetChanged();
 						}
@@ -184,6 +185,7 @@ public class FriendListAdapter extends SessionListAdapter {
 		Friend removeFriend = getItem(position);
 		mFriends.remove(removeFriend);
 		mFiltered = getFilteredList();
+		super.removeItem(position);
 		return removeFriend;
 	}
 

@@ -1,5 +1,6 @@
 package com.reddit.worddit.adapters;
 
+import java.util.ArrayList;	
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.content.Context;
@@ -42,7 +43,7 @@ public abstract class SessionListAdapter extends BaseAdapter {
 	private AtomicBoolean mFetching = new AtomicBoolean(false);
 	
 	/** These flags should be set to "true" when an item in the list is being operated upon */
-	private boolean mUpdatingFlags[];
+	private ArrayList<Boolean> mUpdatingFlags;
 	
 	/** The View we display when we are busy fetching the data */
 	private View mLoadingView;
@@ -148,7 +149,7 @@ public abstract class SessionListAdapter extends BaseAdapter {
 			}
 			return mLoadingView;
 		}
-		else if(mUpdatingFlags != null && position < mUpdatingFlags.length && mUpdatingFlags[position] == true) {
+		else if(mUpdatingFlags != null && position < mUpdatingFlags.size() && mUpdatingFlags.get(position) == true) {
 			return getItemLoadingView(position, convertView, parent);
 		}
 		else if(convertView == mLoadingView) {
@@ -173,7 +174,7 @@ public abstract class SessionListAdapter extends BaseAdapter {
 	 * @param status the new status of the item
 	 */
 	protected void setUpdating(int position, boolean status) {
-		mUpdatingFlags[position] = status;
+		mUpdatingFlags.set(position, status);
 	}
 	
 	/**
@@ -182,9 +183,17 @@ public abstract class SessionListAdapter extends BaseAdapter {
 	 * @return the flag at the given position
 	 */
 	protected boolean getUpdating(int position) {
-		return mUpdatingFlags[position];
+		return mUpdatingFlags.get(position);
 	}
 	
+	/**
+	 * Removes the loading flag when the item is removed from the list
+	 * @param position the position of the flag to remove
+	 * @return the value at the position removed.
+	 */
+	protected boolean removeItem(int position) {
+		return mUpdatingFlags.remove(position);
+	}
 	/**
 	 * Performs the fetch operation for this ListView.
 	 */
@@ -203,7 +212,12 @@ public abstract class SessionListAdapter extends BaseAdapter {
 				SessionListAdapter.this.notifyDataSetChanged();
 				
 				// Adjust array sizes.
-				mUpdatingFlags = new boolean[getCount()];
+				mUpdatingFlags = new ArrayList<Boolean>();
+				
+				
+				for(int i = 0; i < getItemCount(); i++) {
+					 mUpdatingFlags.add(false);
+				}
 			}
 		});
 	}
