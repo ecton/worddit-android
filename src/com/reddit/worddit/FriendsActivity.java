@@ -14,6 +14,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
@@ -50,6 +51,11 @@ public class FriendsActivity extends ListActivity {
 		}
 	}
 	
+	protected void onListItemClick(ListView list, View v, int position, long id) {
+		Friend f = (Friend) list.getItemAtPosition(position);
+		showProfile(f);
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -61,6 +67,18 @@ public class FriendsActivity extends ListActivity {
 		
 		setListAdapter(new FriendListAdapter(this, mSession, R.id.item_friend_email, R.id.item_friend_status));
 		setupListeners();
+	}
+	
+	protected void showProfile(Friend friend) {
+		showProfile(friend.id);
+	}
+	
+	protected void showProfile(String id) {
+		Intent i = new Intent(FriendsActivity.this, ProfileActivity.class);
+		i.putExtra(Constants.EXTRA_SESSION, mSession);
+		i.putExtra(Constants.EXTRA_FRIENDID, id);
+		startActivity(i);
+		// TODO: How do we know if in ProfileActivity they will change the friend??
 	}
 
 	public Friend getFriendAt(int n) {
@@ -78,12 +96,7 @@ public class FriendsActivity extends ListActivity {
 			public void onClick(View v) {
 				EditText et = (EditText) findViewById(R.id.friends_searchTerm);
 				String term = et.getEditableText().toString();
-				Intent i = new Intent(FriendsActivity.this, ProfileActivity.class);
-				i.putExtra(Constants.EXTRA_SESSION, mSession);
-				i.putExtra(Constants.EXTRA_FRIENDID, term);
-				startActivity(i);
-				
-				// TODO: How do we know if in ProfileActivity they will change the friend??
+				showProfile(term);
 			}
 		});
 		

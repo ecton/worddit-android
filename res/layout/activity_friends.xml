@@ -15,7 +15,7 @@
 		android:orientation="horizontal"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:visibility="visible">
+		android:visibility="gone">
 		<EditText
 			android:hint="@string/hint_enterSearchTerm"
 			android:id="@+id/friends_searchTerm"
