@@ -16,7 +16,6 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.reddit.worddit.api.response.ChatMessage;
-import com.reddit.worddit.api.response.Friend;
 import com.reddit.worddit.api.response.Game;
 import com.reddit.worddit.api.response.GameBoard;
 import com.reddit.worddit.api.response.Move;
@@ -142,10 +141,10 @@ public class Session implements Parcelable {
 		return castJson(conn,Game[].class);
 	}
 	
-	public Friend[] getFriends() throws IOException {
+	public Profile[] getFriends() throws IOException {
 		HttpURLConnection conn = get(Worddit.PATH_USER_FRIENDS);
 		if(getLastResponse() != Worddit.SUCCESS) return null;
-		return castJson(conn,Friend[].class);
+		return castJson(conn,Profile[].class);
 	}
 	
 	public Profile findUser(String id) throws IOException {

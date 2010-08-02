@@ -12,11 +12,11 @@ import com.reddit.worddit.R;
 import com.reddit.worddit.api.APICall;
 import com.reddit.worddit.api.APICallback;
 import com.reddit.worddit.api.Session;
-import com.reddit.worddit.api.response.Friend;
+import com.reddit.worddit.api.response.Profile;
 
 public class FriendListAdapter extends SessionListAdapter {
-	protected ArrayList<Friend> mFriends = new ArrayList<Friend>( );
-	protected ArrayList<Friend> mFiltered = mFriends;
+	protected ArrayList<Profile> mFriends = new ArrayList<Profile>( );
+	protected ArrayList<Profile> mFiltered = mFriends;
 	private int mEmailField, mStatusField; 
 	
 	protected String mFilter;
@@ -47,20 +47,20 @@ public class FriendListAdapter extends SessionListAdapter {
 	}
 
 	@Override
-	public Friend getItem(int n) {
+	public Profile getItem(int n) {
 		return mFiltered.get(n);
 	}
 
 	@Override
 	public long getItemId(int n) {
-		Friend f = mFiltered.get(n);
+		Profile f = mFiltered.get(n);
 		return f.id.hashCode();
 	}
 	
 	@Override 
 	public View getItemLoadingView(int position, View convertView, ViewGroup parent) {
 		View friendLoadingItem;
-		Friend friendForView = mFiltered.get(position);
+		Profile friendForView = mFiltered.get(position);
 		
 		if (convertView == null) {
 			friendLoadingItem = mInflater.inflate(R.layout.item_frienditem, null);
@@ -81,7 +81,7 @@ public class FriendListAdapter extends SessionListAdapter {
 	@Override
 	protected View getItemView(int position, View convertView, ViewGroup parent) {
 		View friendItem;
-		Friend friendForView = mFiltered.get(position);
+		Profile friendForView = mFiltered.get(position);
 		
 		if(convertView == null) {
 			friendItem = mInflater.inflate(R.layout.item_frienditem, null);
@@ -121,8 +121,8 @@ public class FriendListAdapter extends SessionListAdapter {
 	@Override
 	protected void onFetchComplete(boolean result, APICall task) {
 		if(result == true) {
-			Friend friends[] = (Friend[]) task.getPayload();
-			mFriends = new ArrayList<Friend>(Arrays.asList(friends));
+			Profile friends[] = (Profile[]) task.getPayload();
+			mFriends = new ArrayList<Profile>(Arrays.asList(friends));
 			mFilter = null;
 			mFiltered = mFriends;
 		}
@@ -130,7 +130,7 @@ public class FriendListAdapter extends SessionListAdapter {
 	
 	public void acceptFriend(final int position) {
 		setUpdating(position,true);
-		Friend friend = getItem(position);
+		Profile friend = getItem(position);
 		
 		// Force the list to show the updating view
 		FriendListAdapter.this.notifyDataSetChanged();
@@ -142,7 +142,7 @@ public class FriendListAdapter extends SessionListAdapter {
 					public void onCallComplete(boolean success, APICall task) {
 						setUpdating(position,false);
 						if(success) {
-							getItem(position).status = Friend.STATUS_ACTIVE;
+							getItem(position).status = Profile.STATUS_ACTIVE;
 						}
 						FriendListAdapter.this.notifyDataSetChanged();
 					}
@@ -154,7 +154,7 @@ public class FriendListAdapter extends SessionListAdapter {
 	
 	public void removeFriend(final int position) {
 		setUpdating(position,true);
-		Friend friend = getItem(position);
+		Profile friend = getItem(position);
 		
 		// Forces redisplay to show the updating item.
 		FriendListAdapter.this.notifyDataSetChanged();
@@ -181,8 +181,8 @@ public class FriendListAdapter extends SessionListAdapter {
 	 * @param position the position of the Friend to remove
 	 * @return the removed Friend
 	 */
-	protected Friend removeFriendFromList(int position) {
-		Friend removeFriend = getItem(position);
+	protected Profile removeFriendFromList(int position) {
+		Profile removeFriend = getItem(position);
 		mFriends.remove(removeFriend);
 		mFiltered = getFilteredList();
 		super.removeItem(position);
@@ -195,14 +195,14 @@ public class FriendListAdapter extends SessionListAdapter {
 	 * is contains (case-insensitive) somewhere in the email field.
 	 * @return a filtered list of friends
 	 */
-	protected ArrayList<Friend> getFilteredList() {
+	protected ArrayList<Profile> getFilteredList() {
 		// Use the default if there's no filter.
 		if(mFilter == null || mFilter.length() == 0) return mFriends;
 		
-		ArrayList<Friend> filtered = new ArrayList<Friend>();
+		ArrayList<Profile> filtered = new ArrayList<Profile>();
 		
 		String filter = mFilter.toLowerCase();
-		for(Friend f : mFriends) {
+		for(Profile f : mFriends) {
 			String email = f.email.toLowerCase();
 			
 			if(email.contains(filter)) {

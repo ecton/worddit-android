@@ -21,12 +21,12 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.reddit.worddit.adapters.FriendListAdapter;
 import com.reddit.worddit.api.Session;
-import com.reddit.worddit.api.response.Friend;
+import com.reddit.worddit.api.response.Profile;
 
 public class FriendsActivity extends ListActivity {
 	public static final String TAG = "FriendList";
 	
-	protected Friend[] mFriends;
+	protected Profile[] mFriends;
 	protected Session mSession;
 	
 	@Override
@@ -50,7 +50,7 @@ public class FriendsActivity extends ListActivity {
 	}
 	
 	protected void onListItemClick(ListView list, View v, int position, long id) {
-		Friend f = (Friend) list.getItemAtPosition(position);
+		Profile f = (Profile) list.getItemAtPosition(position);
 		showProfile(f);
 	}
 	
@@ -73,7 +73,7 @@ public class FriendsActivity extends ListActivity {
 		adapter.setFilter(filter);
 	}
 	
-	protected void showProfile(Friend friend) {
+	protected void showProfile(Profile friend) {
 		showProfile(friend.id);
 	}
 	
@@ -85,8 +85,8 @@ public class FriendsActivity extends ListActivity {
 		// TODO: How do we know if in ProfileActivity they will change the friend??
 	}
 
-	public Friend getFriendAt(int n) {
-		return (Friend)getListAdapter().getItem(n);
+	public Profile getFriendAt(int n) {
+		return (Profile)getListAdapter().getItem(n);
 	}
 	
 	public String getSearchTerm() {

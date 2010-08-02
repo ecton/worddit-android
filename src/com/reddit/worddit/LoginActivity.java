@@ -70,6 +70,21 @@ public class LoginActivity extends Activity implements APICallback {
 			.create();
 	}
 	
+	/*
+	protected void onSaveInstanceState(Bundle icicle) {
+		icicle.putInt(CONFIRM_STATE,
+				findViewById(R.id.login_input_confirmpassword).getVisibility());
+	}
+	
+	protected void onRestoreInstanceState(Bundle icicle) {
+		int foo = icicle.getInt(CONFIRM_STATE);
+		View v = findViewById(R.id.login_input_confirmpassword);
+		
+		if(v != null) {
+			v.setVisibility(foo);
+		}
+	}*/
+	
 	private void setup() {
 		// Force confirm password field to reflect default state of checkbox
 		doNewChecked(null);
@@ -233,5 +248,8 @@ public class LoginActivity extends Activity implements APICallback {
 	/** Constant to represent the ProgressDialog */
 	public static final int
 		DIALOG_WAIT = 1;
+	
+	public static final String
+		CONFIRM_STATE = "confirm-state";
 
 }
