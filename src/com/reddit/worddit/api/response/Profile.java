@@ -1,11 +1,17 @@
 package com.reddit.worddit.api.response;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Class to represent a user's profile.
  * @author OEP
  *
  */
-public class Profile {
+public class Profile implements Parcelable {
 	/** User's ID */
 	public String id;
 	
@@ -20,6 +26,26 @@ public class Profile {
 	
 	/** Status of friendship */
 	public String status;
+	
+	/**
+	 * Default constructor.
+	 * GSON requires a no-args constructor for automatic casting.
+	 */
+	public Profile() {
+		
+	}
+	
+	/**
+	 * Construct a Profile from a Parcel.
+	 * @param in the parcel to construct from
+	 */
+	private Profile(Parcel in) {
+		id = in.readString();
+		nickname = in.readString();
+		avatar = in.readString();
+		email = in.readString();
+		status = in.readString();
+	}
 	
 	/**
 	 * Checks to see if this friendship is // TODO: Did we request or they request?
@@ -58,4 +84,31 @@ public class Profile {
 		STATUS_REQUESTED = "requested",
 		STATUS_PENDING = "pending",
 		STATUS_ACTIVE = "active";
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(id);
+		dest.writeString(nickname);
+		dest.writeString(avatar);
+		dest.writeString(email);
+		dest.writeString(status);
+	}
+	
+	public static final Parcelable.Creator<Profile> CREATOR
+		= new Parcelable.Creator<Profile>() {
+			@Override
+			public Profile createFromParcel(Parcel source) {
+				return new Profile(source);
+			}
+
+			@Override
+			public Profile[] newArray(int size) {
+				return new Profile[size];
+			}
+		};
 }
