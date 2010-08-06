@@ -56,7 +56,7 @@
     
     <string name="msg_friend_accepted">Friend accepted!</string>
     
-    <string name="msg_internal_error">Worddit had a boo-boo. Please pretend it didn't happen and try again.</string>
+    <string name="msg_internal_error">Worddit had a boo-boo. Please pretend it didn\'t happen and try again.</string>
     <string name="msg_successful_action">Action completed successfully.</string>
     <string name="msg_fail_connection">There was a problem with the network connection.</string>
     <string name="msg_fail_bad_username">Invalid username or password.</string>
