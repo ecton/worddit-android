@@ -10,7 +10,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ProfileActivity extends Activity {
 
@@ -101,8 +103,172 @@ public class ProfileActivity extends Activity {
 		
 		findViewById(R.id.profile_bodyContainer).setVisibility(View.VISIBLE);
 		findViewById(R.id.profile_messageContainer).setVisibility(View.GONE);
+
+		if(p.isActive()) {
+			setDefriend();
+		}
+		else if(p.isPending()) {
+			setPending();
+		}
+		else if(p.isRequested()) {
+			setAccept();
+		}
+		else if(p.isUnrequested()) {
+			setRequest();
+		}
+	}
+	
+	protected void setDefriend() {
+		final Button main = (Button) findViewById(R.id.profile_btnFriendAction);
+		final Button aux = (Button) findViewById(R.id.profile_btnAuxFriendAction);
+		final TextView status = (TextView) findViewById(R.id.profile_friendStatus);
 		
-		// TODO: Friend status? Change the buttons?
+		main.setVisibility(View.VISIBLE);
+		aux.setVisibility(View.GONE);
+		
+		main.setEnabled(true);
+		main.setText(R.string.label_defriend);
+		status.setText(R.string.msg_friendshipActive);
+		
+		main.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				main.setEnabled(false);
+				main.setText(R.string.label_working);
+				
+				APICall task = new APICall(
+					new APICallback() {
+						@Override
+						public void onCallComplete(boolean success, APICall task) {
+							if(success) {
+								mProfile.status = null;
+							}
+							else {
+								Toast.makeText(
+										ProfileActivity.this, task.getMessage(), Toast.LENGTH_LONG).show();
+							}
+							showProfile(mProfile);
+						}
+					},
+					mSession);
+				task.rejectFriend(mProfile.id);
+			}
+		});
+	}
+	
+	protected void setPending() {
+		final Button main = (Button) findViewById(R.id.profile_btnFriendAction);
+		final Button aux = (Button) findViewById(R.id.profile_btnAuxFriendAction);
+		final TextView status = (TextView) findViewById(R.id.profile_friendStatus);
+		
+		main.setVisibility(View.GONE);
+		aux.setVisibility(View.GONE);
+		status.setText(R.string.msg_friendshipPending);
+	}
+	
+	protected void setRequest() {
+		final Button main = (Button) findViewById(R.id.profile_btnFriendAction);
+		final Button aux = (Button) findViewById(R.id.profile_btnAuxFriendAction);
+		final TextView status = (TextView) findViewById(R.id.profile_friendStatus);
+		
+		main.setVisibility(View.VISIBLE);
+		aux.setVisibility(View.GONE);
+		
+		main.setEnabled(true);
+		main.setText(R.string.label_request_friend);
+		status.setText(R.string.msg_friendshipInactive);
+		
+		main.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				main.setEnabled(false);
+				main.setText(R.string.label_working);
+				
+				APICall task = new APICall(
+					new APICallback() {
+						@Override
+						public void onCallComplete(boolean success, APICall task) {
+							if(success) {
+								mProfile.status = Profile.STATUS_PENDING;
+							}
+							else {
+								Toast.makeText(
+										ProfileActivity.this, task.getMessage(), Toast.LENGTH_LONG).show();
+							}
+							showProfile(mProfile);
+						}
+					},
+					mSession);
+				task.addFriend(mProfile.id);
+			}
+		});
+	}
+	
+	protected void setAccept() {
+		final Button main = (Button) findViewById(R.id.profile_btnFriendAction);
+		final Button aux = (Button) findViewById(R.id.profile_btnAuxFriendAction);
+		final TextView status = (TextView) findViewById(R.id.profile_friendStatus);
+		
+		main.setVisibility(View.VISIBLE);
+		aux.setVisibility(View.VISIBLE);
+		main.setEnabled(true);
+		aux.setEnabled(true);
+		
+		main.setText(R.string.label_accept);
+		aux.setText(R.string.label_reject);
+		status.setText(R.string.msg_friendshipRequested);
+		
+		main.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				aux.setVisibility(View.GONE);
+				main.setEnabled(false);
+				main.setText(R.string.label_working);
+				
+				APICall task = new APICall(
+					new APICallback() {
+						@Override
+						public void onCallComplete(boolean success, APICall task) {
+							if(success) {
+								mProfile.status = Profile.STATUS_ACTIVE;
+							}
+							else {
+								Toast.makeText(
+										ProfileActivity.this, task.getMessage(), Toast.LENGTH_LONG).show();
+							}
+							showProfile(mProfile);
+						}
+					},
+					mSession);
+				task.acceptFriend(mProfile.id);
+			}
+		});
+		
+		aux.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				main.setVisibility(View.GONE);
+				aux.setEnabled(false);
+				aux.setText(R.string.label_working);
+				
+				APICall task = new APICall(
+					new APICallback() {
+						@Override
+						public void onCallComplete(boolean success, APICall task) {
+							if(success) {
+								mProfile.status = null;
+							}
+							else {
+								Toast.makeText(
+										ProfileActivity.this, task.getMessage(), Toast.LENGTH_LONG).show();
+							}
+							showProfile(mProfile);
+						}
+					},
+					mSession);
+				task.rejectFriend(mProfile.id);
+			}
+		});
 	}
 	
 	protected void fetchInfo() {

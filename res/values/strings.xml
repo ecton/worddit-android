@@ -7,6 +7,7 @@
 	<string name="label_create">I\'m new</string>
 	<string name="label_ok">OK</string>
 	<string name="label_loading">Loading...</string>
+	<string name="label_working">Working...</string>
 	<string name="label_retry">Retry</string>
 	
 	<string name="label_game_pending">Waiting on players</string>
@@ -37,6 +38,11 @@
 	<string name="label_game_add">New Game</string>
 	<string name="label_friend_search">Search</string>
 	
+	<string name="label_accept">Accept</string>
+	<string name="label_reject">Reject</string>
+	<string name="label_pending">Pending</string>
+	<string name="label_defriend">Defriend</string>
+	
 	<string name="label_games">Games</string>
 	<string name="label_friends">Friends</string>
 	
@@ -63,4 +69,9 @@
     <string name="msg_fail_user_exists">That user already exists.</string>
     <string name="msg_search_no_results">Your search has no results.</string>
     <string name="msg_unknown_response">Could not understand server response. It\'s not your fault! Try again later.</string>
+    
+    <string name="msg_friendshipRequested">Your friendship is requested.</string>
+    <string name="msg_friendshipPending">Your friend invitation is pending.</string>
+    <string name="msg_friendshipActive">You are friends.</string>
+    <string name="msg_friendshipInactive">You are not friends.</string>
 </resources>

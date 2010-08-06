@@ -108,13 +108,33 @@
 			android:id="@+id/profile_actionBlock"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:orientation="horizontal">
-			<Button
-				android:text="@string/label_request_friend"
-				android:id="@+id/profile_btnFriendAction"
-				android:visibility="gone"
-				android:layout_width="wrap_content"
+			android:orientation="vertical">
+			
+			<TextView
+				android:id="@+id/profile_friendStatus"
+				android:gravity="center_horizontal"
+				android:layout_width="fill_parent"
 				android:layout_height="wrap_content" />
+				
+			
+			<LinearLayout
+				android:id="@+id/profile_buttonBlock"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_horizontal"
+				android:orientation="horizontal">
+				<Button
+					android:text="@string/label_request_friend"
+					android:id="@+id/profile_btnFriendAction"
+					android:layout_width="140dp"
+					android:layout_height="wrap_content" />
+					
+				<Button
+					android:text="@string/label_request_friend"
+					android:id="@+id/profile_btnAuxFriendAction"
+					android:layout_width="140dp"
+					android:layout_height="wrap_content" />
+			</LinearLayout>
 		</LinearLayout>
 	</LinearLayout>
 </LinearLayout>
