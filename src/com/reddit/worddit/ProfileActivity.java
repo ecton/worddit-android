@@ -15,10 +15,12 @@ import android.widget.TextView;
 public class ProfileActivity extends Activity {
 
 	protected Session mSession;
-	protected String mFriendStatus;
-	protected String mAvatarUrl;
-	protected boolean mInfoFetched = false;
-	protected boolean mAvatarFetched = false;
+	
+	// These fields need to be restorable by Bundle
+	protected int mLayoutState = STATE_LOADING;
+	protected Profile mProfile;
+	protected int mMessageId;
+	
 	
 	protected void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
@@ -26,7 +28,20 @@ public class ProfileActivity extends Activity {
 		mSession = (Session) i.getParcelableExtra(Constants.EXTRA_SESSION);
 		this.setContentView(R.layout.activity_profile);
 		setupListeners();
-		fetchInfo();
+		
+		if(icicle == null) {
+			showFetching();
+			fetchInfo();
+		}
+		else {
+			restoreFromBundle(icicle);
+			
+			// Orientation changes kill the thread, so the best thing
+			// we can do is just to start the damn thing over.
+			if(mLayoutState == STATE_LOADING) {
+				fetchInfo();
+			}
+		}
 	}
 	
 	protected void onSaveInstanceState(Bundle icicle) {
@@ -38,6 +53,7 @@ public class ProfileActivity extends Activity {
 	}
 	
 	protected void showFetching() {
+		mLayoutState = STATE_LOADING;
 		findViewById(R.id.profile_bodyContainer).setVisibility(View.GONE);
 		findViewById(R.id.profile_messageContainer).setVisibility(View.VISIBLE);
 		findViewById(R.id.profile_progressBar).setVisibility(View.VISIBLE);
@@ -48,6 +64,8 @@ public class ProfileActivity extends Activity {
 	}
 	
 	protected void showMessage(int resId) {
+		mLayoutState = STATE_MESSAGE;
+		mMessageId = resId;
 		findViewById(R.id.profile_bodyContainer).setVisibility(View.GONE);
 		findViewById(R.id.profile_messageContainer).setVisibility(View.VISIBLE);
 		findViewById(R.id.profile_progressBar).setVisibility(View.GONE);
@@ -58,10 +76,11 @@ public class ProfileActivity extends Activity {
 	}
 	
 	protected void showProfile(Profile p) {
+		mLayoutState = STATE_PROFILE;
 		TextView title = (TextView) findViewById(R.id.profile_title);
 		TextView subtitle = (TextView) findViewById(R.id.profile_subtitle);
 		
-		mAvatarUrl = p.avatar;
+		mProfile = p;
 		
 		if(p.nickname != null && p.nickname.length() > 0 && p.email != null) {
 			title.setText(p.nickname);
@@ -87,14 +106,11 @@ public class ProfileActivity extends Activity {
 	}
 	
 	protected void fetchInfo() {
-		if(mInfoFetched == true) return;
+		if(mProfile != null) return;
 		
-		showFetching();
 		APICall task = new APICall(new APICallback() {
 			@Override
 			public void onCallComplete(boolean success, APICall task) {
-				mInfoFetched = success;
-				
 				if(success) {
 					showProfile((Profile) task.getPayload());
 				}
@@ -103,7 +119,6 @@ public class ProfileActivity extends Activity {
 				}
 			}
 		}, mSession);
-		mInfoFetched = true;
 		
 		Intent i = getIntent();
 		task.findUser( i.getStringExtra(Constants.EXTRA_FRIENDID) );
@@ -111,50 +126,42 @@ public class ProfileActivity extends Activity {
 
 	private void saveToBundle(Bundle b) {
 		if(b == null) return;
-		
-		TextView title = (TextView) findViewById(R.id.profile_title);
-		TextView subtitle = (TextView) findViewById(R.id.profile_subtitle);
-		
-		b.putString(TITLE, title.getText().toString());
-		b.putString(SUBTITLE, subtitle.getText().toString());
-		b.putInt(SUBTITLE_STATUS, subtitle.getVisibility());
-		b.putString(STATUS, mFriendStatus);
-		b.putString(AVATAR_URL, mAvatarUrl);
-		b.putBoolean(FETCHED_INFO, mInfoFetched);
-		b.putBoolean(FETCHED_AVATAR, mAvatarFetched);
-		
+		b.putParcelable(PROFILE, mProfile);
+		b.putInt(MSGID, mMessageId);
+		b.putInt(LAYOUT_STATE, mLayoutState);
 	}
 	
 	private void restoreFromBundle(Bundle b) {
 		if(b == null) return;
-		
-		TextView title = (TextView) findViewById(R.id.profile_title);
-		TextView subtitle = (TextView) findViewById(R.id.profile_subtitle);
-		
-		title.setText(b.getString(TITLE));
-		subtitle.setText(b.getString(SUBTITLE));
-		subtitle.setVisibility(b.getInt(SUBTITLE_STATUS));
-		mFriendStatus = (b.containsKey(STATUS)) ? b.getString(STATUS) : mFriendStatus;
-		mAvatarUrl = (b.containsKey(AVATAR_URL)) ? b.getString(AVATAR_URL) : mAvatarUrl;
-		mInfoFetched = b.getBoolean(FETCHED_INFO);
-		mAvatarFetched = b.getBoolean(FETCHED_AVATAR);
+		mProfile = (Profile) b.getParcelable(PROFILE);
+		mMessageId = b.getInt(MSGID);
+		mLayoutState = b.getInt(LAYOUT_STATE);
+	
+		switch(mLayoutState) {
+		case STATE_LOADING: showFetching(); break;
+		case STATE_MESSAGE: showMessage(mMessageId); break;
+		case STATE_PROFILE: showProfile(mProfile); break;
+		default: showMessage(R.string.msg_internal_error); break;
+		}
 	}
 	
 	private void setupListeners() {
 		findViewById(R.id.profile_btnRetry).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				ProfileActivity.this.showFetching();
 				ProfileActivity.this.fetchInfo();
 			}
 		});
 	}
 	
+	public static final int
+		STATE_LOADING = 1,
+		STATE_MESSAGE = STATE_LOADING + 1,
+		STATE_PROFILE = STATE_LOADING + 2;
+	
 	public static final String
-		TITLE = "title",
-		SUBTITLE = "subtitle",
-		SUBTITLE_STATUS = "subtitle-status",
-		STATUS = "status",
-		AVATAR_URL = "avatar-url",
-		FETCHED_INFO = "fetched-info",
-		FETCHED_AVATAR = "fetched-avatar";
+		LAYOUT_STATE = "layout-state",
+		PROFILE = "profile",
+		MSGID = "msg-id";
 }
