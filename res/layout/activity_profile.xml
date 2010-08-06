@@ -111,29 +111,7 @@
 			android:orientation="horizontal">
 			<Button
 				android:text="@string/label_request_friend"
-				android:id="@+id/friends_btnRequestFriend"
-				android:visibility="gone"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content" />
-
-			<Button
-				android:text="@string/label_accept_friend"
-				android:id="@+id/friends_btnAcceptFriend"
-				android:visibility="gone"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content" />
-
-			<Button
-				android:text="@string/label_friend_pending"
-				android:id="@+id/friends_btnPending"
-				android:visibility="gone"
-				android:enabled="false"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content" />
-
-			<Button
-				android:text="@string/label_reject_friend"
-				android:id="@+id/friends_btnRejectFriend"
+				android:id="@+id/profile_btnFriendAction"
 				android:visibility="gone"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content" />
