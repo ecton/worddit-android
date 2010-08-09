@@ -31,7 +31,9 @@ public class GamesActivity extends ListActivity {
 	}
 
 	private void setupList() {
-		setListAdapter(new GameListAdapter(this, mSession));
+		GameListAdapter adapter;
+		setListAdapter(adapter = new GameListAdapter(this, mSession));
+		adapter.repopulate();
 	}
 	
 	@Override

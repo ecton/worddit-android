@@ -26,7 +26,6 @@ import com.reddit.worddit.api.response.Profile;
 public class FriendsActivity extends ListActivity {
 	public static final String TAG = "FriendList";
 	
-	protected Profile[] mFriends;
 	protected Session mSession;
 	
 	@Override
@@ -55,16 +54,63 @@ public class FriendsActivity extends ListActivity {
 	}
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	protected void onCreate(Bundle icicle) {
+		super.onCreate(icicle);
 		setContentView(R.layout.activity_friends);
 		registerForContextMenu(getListView());
 
 		Intent i = getIntent();
 		mSession = (Session) i.getParcelableExtra(Constants.EXTRA_SESSION);
 		
-		setListAdapter(new FriendListAdapter(this, mSession, R.id.item_friend_email, R.id.item_friend_status));
+		FriendListAdapter adapter;
+		setListAdapter(adapter = new FriendListAdapter(this, mSession, R.id.item_friend_email, R.id.item_friend_status));
 		setupListeners();
+		
+		if(icicle != null) {
+			restoreFromBundle(icicle);
+		}
+		else {
+			adapter.repopulate();
+		}
+	}
+	
+	protected void onSaveInstanceState(Bundle icicle) {
+		FriendListAdapter adapter = (FriendListAdapter) getListAdapter();
+		Profile friends[] = adapter.getFriends();
+		String term = getSearchTerm();
+		icicle.putParcelableArray(FRIENDS_DATA, friends);
+		icicle.putString(FILTER, term);
+		icicle.putInt(SEARCH_VISIBILITY, findViewById(R.id.friends_searchpane).getVisibility());
+	}
+	
+	protected void restoreFromBundle(Bundle icicle) {
+		FriendListAdapter adapter = (FriendListAdapter) getListAdapter();
+		Profile friends[] = (Profile[]) icicle.getParcelableArray(FRIENDS_DATA);
+		
+		// Restore search pane visibility
+		if(icicle.containsKey(SEARCH_VISIBILITY)) {
+			findViewById(R.id.friends_searchpane).setVisibility(
+				icicle.getInt(SEARCH_VISIBILITY)
+			);
+		}
+		
+		// Restore or fetch the friends...
+		if(friends != null) {
+			// Restore the friends list.
+			adapter.setFriends((Profile[]) icicle.getParcelableArray(FRIENDS_DATA));
+		}
+		else {
+			adapter.repopulate();
+		}
+		
+		// Restore the search term
+		if(icicle.containsKey(FILTER)) {
+			String term = icicle.getString(FILTER);
+			EditText search = (EditText) findViewById(R.id.friends_searchTerm);
+			adapter.setFilter(term);
+			search.setText(term);
+		}
+		
 	}
 	
 	protected void updateFilter() {
@@ -181,4 +227,9 @@ public class FriendsActivity extends ListActivity {
 				return super.onContextItemSelected(item);
 		}
 	}
+	
+	public static final String
+		FRIENDS_DATA = "friends-data",
+		FILTER = "filter",
+		SEARCH_VISIBILITY = "search-visibility";
 }

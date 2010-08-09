@@ -112,7 +112,6 @@ public abstract class SessionListAdapter extends BaseAdapter {
 		mContext = ctx;
 		mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		mSession = session;
-		repopulate();
 	}
 	
 	/**
@@ -194,10 +193,11 @@ public abstract class SessionListAdapter extends BaseAdapter {
 	protected boolean removeItem(int position) {
 		return mUpdatingFlags.remove(position);
 	}
+	
 	/**
 	 * Performs the fetch operation for this ListView.
 	 */
-	private void repopulate() {
+	public void repopulate() {
 		// We're working on it already!
 		if(mFetching.get() == true) return;
 		

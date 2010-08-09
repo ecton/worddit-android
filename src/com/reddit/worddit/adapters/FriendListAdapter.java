@@ -57,6 +57,23 @@ public class FriendListAdapter extends SessionListAdapter {
 		return f.id.hashCode();
 	}
 	
+	public Profile[] getFriends() {
+		Profile friends[] = new Profile[mFriends.size()];
+		return mFriends.toArray(friends);
+	}
+	
+	public void setFriends(Profile data[]) {
+		if(data == null) {
+			// The equivalent of null data is an empty array...
+			mFriends = new ArrayList<Profile>();
+			mFiltered = mFriends;
+			return;
+		}
+		
+		mFriends = new ArrayList<Profile>( Arrays.asList(data) );
+		mFiltered = mFriends;
+	}
+	
 	@Override 
 	public View getItemLoadingView(int position, View convertView, ViewGroup parent) {
 		View friendLoadingItem;
