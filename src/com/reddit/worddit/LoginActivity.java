@@ -34,12 +34,16 @@ public class LoginActivity extends Activity implements APICallback {
 	
 	/** Called when the activity is first created. */
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	public void onCreate(Bundle icicle) {
+		super.onCreate(icicle);
 		
 		mWindowIndeterminate = requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_login);
 		setup();
+		
+		if(icicle != null) {
+			restoreFromBundle(icicle);
+		}
 	}
 	
 	/** Called when we create a dialog using showDialog(int) */
@@ -70,20 +74,25 @@ public class LoginActivity extends Activity implements APICallback {
 			.create();
 	}
 	
-	/*
+	/**
+	 * Saves the state of this Activity.
+	 */
 	protected void onSaveInstanceState(Bundle icicle) {
+		super.onSaveInstanceState(icicle);
 		icicle.putInt(CONFIRM_STATE,
 				findViewById(R.id.login_input_confirmpassword).getVisibility());
 	}
 	
-	protected void onRestoreInstanceState(Bundle icicle) {
-		int foo = icicle.getInt(CONFIRM_STATE);
-		View v = findViewById(R.id.login_input_confirmpassword);
-		
-		if(v != null) {
-			v.setVisibility(foo);
-		}
-	}*/
+	/**
+	 * Restores the state of this Activity from a bundle.
+	 * @param b the bundle to restore from.
+	 */
+	protected void restoreFromBundle(Bundle b) {
+		// Tracking the visibility of the "confirm password" field
+		// has been a problem with orientation changes. This fixes that.
+		int foo = b.getInt(CONFIRM_STATE);
+		findViewById(R.id.login_input_confirmpassword).setVisibility(foo);
+	}
 	
 	private void setup() {
 		// Force confirm password field to reflect default state of checkbox
