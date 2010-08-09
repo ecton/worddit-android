@@ -1,5 +1,9 @@
 package com.reddit.worddit;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import com.reddit.worddit.api.APICall;
 import com.reddit.worddit.api.APICallback;
 import com.reddit.worddit.api.Session;
@@ -7,10 +11,15 @@ import com.reddit.worddit.api.response.Profile;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,8 +29,10 @@ public class ProfileActivity extends Activity {
 	
 	// These fields need to be restorable by Bundle
 	protected int mLayoutState = STATE_LOADING;
+	protected int mAvatarState = STATE_UNFETCHED;
 	protected Profile mProfile;
 	protected int mMessageId;
+	protected Bitmap mAvatar;
 	
 	
 	protected void onCreate(Bundle icicle) {
@@ -115,6 +126,29 @@ public class ProfileActivity extends Activity {
 		}
 		else if(p.isUnrequested()) {
 			setRequest();
+		}
+		
+		if(mAvatarState == STATE_FETCHED) {
+			showAvatar(mAvatar);
+		}
+		else {
+			fetchAvatar();
+		}
+	}
+	
+	protected void showAvatar(Bitmap avatar) {
+		mAvatar = avatar;
+		mAvatarState = STATE_FETCHED;
+		
+		ImageView iv = (ImageView)  findViewById(R.id.profile_avatar);
+		iv.setVisibility(View.VISIBLE);
+		findViewById(R.id.profile_avatarLoader).setVisibility(View.GONE);
+		
+		if(avatar != null) {
+			iv.setImageBitmap(avatar);
+		}
+		else {
+			iv.setImageResource(R.drawable.ic_contact_picture);
 		}
 	}
 	
@@ -289,12 +323,42 @@ public class ProfileActivity extends Activity {
 		Intent i = getIntent();
 		task.findUser( i.getStringExtra(Constants.EXTRA_FRIENDID) );
 	}
+	
+	protected void fetchAvatar() {
+		findViewById(R.id.profile_avatarLoader).setVisibility(View.VISIBLE);
+		findViewById(R.id.profile_avatar).setVisibility(View.GONE);
+		
+		FetchAvatarTask task = new FetchAvatarTask();
+		task.execute(mProfile.avatar);
+	}
 
 	private void saveToBundle(Bundle b) {
 		if(b == null) return;
 		b.putParcelable(PROFILE, mProfile);
 		b.putInt(MSGID, mMessageId);
 		b.putInt(LAYOUT_STATE, mLayoutState);
+		b.putParcelable(AVATAR, mAvatar);
+		b.putInt(AVATAR_STATE, mAvatarState);
+	}
+	
+	class FetchAvatarTask extends AsyncTask<String, Integer, Bitmap> {
+		@Override
+		protected Bitmap doInBackground(String... location) {
+			try {
+				location[0] = "http://www.osnn.net/customavatars/avatar128467_1.gif";
+				URL url = new URL(location[0]);
+				Bitmap bm = BitmapFactory.decodeStream(url.openStream());
+				return bm;
+			}
+			catch (MalformedURLException e) { }
+			catch (IOException e) { }
+			
+			return null;
+		}
+
+		protected void onPostExecute(Bitmap result) {
+			ProfileActivity.this.showAvatar(result);
+		}
 	}
 	
 	private void restoreFromBundle(Bundle b) {
@@ -302,6 +366,8 @@ public class ProfileActivity extends Activity {
 		mProfile = (Profile) b.getParcelable(PROFILE);
 		mMessageId = b.getInt(MSGID);
 		mLayoutState = b.getInt(LAYOUT_STATE);
+		mAvatar = (Bitmap) b.getParcelable(AVATAR);
+		mAvatarState = b.getInt(AVATAR_STATE);
 	
 		switch(mLayoutState) {
 		case STATE_LOADING: showFetching(); break;
@@ -321,13 +387,21 @@ public class ProfileActivity extends Activity {
 		});
 	}
 	
+	/** State for how the UI should look. */
 	public static final int
 		STATE_LOADING = 1,
 		STATE_MESSAGE = STATE_LOADING + 1,
 		STATE_PROFILE = STATE_LOADING + 2;
 	
+	/** State for the fetchedness of the avatar */
+	public static final int
+		STATE_UNFETCHED = 1,
+		STATE_FETCHED = STATE_UNFETCHED + 1;
+	
 	public static final String
 		LAYOUT_STATE = "layout-state",
 		PROFILE = "profile",
-		MSGID = "msg-id";
+		MSGID = "msg-id",
+		AVATAR = "avatar",
+		AVATAR_STATE = "avatar-state";
 }
