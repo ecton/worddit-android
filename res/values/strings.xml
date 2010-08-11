@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">Worddit</string>
 
+	<!-- Buttons and dialogs -->
 	<string name="label_login">Login</string>
 	<string name="label_search">Search</string>
 	<string name="label_create">I\'m new</string>
@@ -9,6 +10,9 @@
 	<string name="label_loading">Loading...</string>
 	<string name="label_working">Working...</string>
 	<string name="label_retry">Retry</string>
+	<string name="label_save">Save</string>
+	<string name="label_cancel">Cancel</string>
+	<string name="label_changeAvatar">Change avatar</string>
 	
 	<string name="label_game_pending">Waiting on players</string>
 	<string name="label_game_completed">Completed</string>
@@ -26,7 +30,7 @@
 	<string name="label_friend_requested">Requested</string>
 	<string name="label_friend_pending">Pending</string>
 	<string name="label_friend_active">Active</string>
-	<string name='label_no_nickname'>[No nickname]</string>
+	<string name="label_no_nickname">Anonymous</string>
 	
 	<string name="label_friend_accept">Accept Friend</string>
 	<string name="label_friend_reject">Reject Friend</string>
@@ -50,6 +54,9 @@
 	<string name="label_updating">Updating...</string>
 	
     <string name="hint_email">Email</string> 
+    <string name="hint_nickname">Nickname</string> 
+    <string name="hint_new_password">New password</string> 
+    <string name="hint_new_password_confirm">New password (confirm)</string> 
     <string name="hint_password">Password</string> 
     <string name="hint_password_confirm">Password (confirm)</string> 
     <string name="hint_enterSearchTerm">Email, nickname...</string>

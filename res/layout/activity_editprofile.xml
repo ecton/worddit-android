@@ -1,0 +1,135 @@
+<LinearLayout
+	android:id="@+id/editprofile_root"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:orientation="vertical"
+	android:gravity="center_vertical"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<!-- The "loading" portion for this Activity... -->
+	<LinearLayout
+		android:id="@+id/editprofile_messageBody"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		android:visibility="gone"
+		android:orientation="vertical">
+		<LinearLayout
+			android:id="@+id/editprofile_messageRow"
+			android:layout_width="wrap_content"
+			android:layout_height="fill_parent"
+			android:orientation="horizontal">
+			<ProgressBar
+				android:id="@+id/editprofile_progressBar"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_vertical"
+				android:layout_width="wrap_content" />
+			<TextView
+				android:id="@+id/editprofile_message"
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:layout_gravity="center_vertical"
+				android:textSize="18dp"
+				android:padding="4dp"
+				android:text="@string/label_loading" />
+		</LinearLayout>
+		<Button
+			android:layout_width="130dp"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal"
+			android:id="@+id/editprofile_btnRetry"
+			android:text="@string/label_retry" />
+	</LinearLayout>
+
+	<LinearLayout
+		android:id="@+id/editprofile_editBody"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_vertical"
+		android:paddingLeft="30dp"
+		android:paddingRight="30dp"
+		android:visibility="visible"
+		android:orientation="vertical">
+
+		<LinearLayout
+			android:id="@+id/editprofile_avatarContainer"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:paddingBottom="5dp">
+			<ProgressBar
+				android:id="@+id/editprofile_avatarLoader"
+				android:visibility="gone"
+				android:layout_height="54dp"
+				android:layout_width="54dp" />
+			<ImageView
+				android:id="@+id/editprofile_avatar"
+				android:src="@drawable/ic_contact_picture"
+				android:layout_width="54dp"
+				android:layout_height="54dp" />
+
+			<FrameLayout
+				android:layout_width="wrap_content"
+				android:layout_height="fill_parent"
+				android:layout_weight="1">
+				<Button
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/label_changeAvatar"
+					android:layout_gravity="center_vertical|center_horizontal" />
+			</FrameLayout>
+
+		</LinearLayout>
+
+		<EditText
+			android:id="@+id/editprofile_email"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:inputType="textEmailAddress"
+			android:hint="@string/hint_email" />
+
+		<EditText
+			android:id="@+id/editprofile_nickname"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:hint="@string/hint_nickname" />
+
+		<EditText
+			android:id="@+id/editprofile_newpassword"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:inputType="textPassword"
+			android:hint="@string/hint_new_password" />
+
+		<EditText
+			android:id="@+id/editprofile_confirmpassword"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:inputType="textPassword"
+			android:hint="@string/hint_new_password_confirm" />
+
+		<LinearLayout
+			android:id="@+id/editprofile_buttonContainer"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content">
+
+			<Button
+				android:id="@+id/editprofile_btnSave"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/label_save"
+				android:layout_weight="1" />
+
+			<Button
+				android:id="@+id/editprofile_btnCancel"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/label_cancel"
+				android:layout_weight="1" />
+
+		</LinearLayout>
+
+	</LinearLayout>
+
+
+
+</LinearLayout>
