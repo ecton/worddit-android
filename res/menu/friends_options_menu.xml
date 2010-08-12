@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
-		android:id="@+id/friend_search" android:title="@string/label_friend_search" android:icon="@drawable/ic_menu_search"></item>
+		android:title="@string/label_friend_search" android:icon="@drawable/ic_menu_search" android:id="@+id/menuitem_search"></item>
+<item android:id="@+id/menuitem_myprofile" android:icon="@drawable/ic_menu_edit" android:title="@string/label_myProfile"></item>
 </menu>

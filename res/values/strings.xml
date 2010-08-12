@@ -13,6 +13,7 @@
 	<string name="label_save">Save</string>
 	<string name="label_cancel">Cancel</string>
 	<string name="label_changeAvatar">Change avatar</string>
+	<string name="label_myProfile">My profile</string>
 	
 	<string name="label_game_pending">Waiting on players</string>
 	<string name="label_game_completed">Completed</string>

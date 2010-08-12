@@ -49,7 +49,6 @@
 				android:id="@+id/profile_btnRetry"
 				android:text="@string/label_retry"/>
 		</LinearLayout>
-		
 	</FrameLayout>
 
 	<LinearLayout

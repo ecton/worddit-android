@@ -40,8 +40,13 @@ public class FriendsActivity extends ListActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
-		case R.id.friend_search:
+		case R.id.menuitem_search:
 			findViewById(R.id.friends_searchpane).setVisibility(View.VISIBLE);
+			return true;
+		case R.id.menuitem_myprofile:
+			Intent intent = new Intent(this, EditProfileActivity.class);
+			intent.putExtra(Constants.EXTRA_SESSION, mSession);
+			startActivity(intent);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
