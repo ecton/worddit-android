@@ -38,6 +38,9 @@ public class Session implements Parcelable {
 	/** Last HTTP response code from the Worddit server */
 	private int mLastResponse;
 	
+	/** The logged-in user's profile */
+	protected Profile mProfile;
+	
 	/** The client type (what is this?) */
 	// TODO: Find a way to resolve what this value is.
 	private String mClientType = "foo";
@@ -55,10 +58,8 @@ public class Session implements Parcelable {
 	 * @throws MalformedURLException */
 	private Session (Parcel in) throws MalformedURLException {
 		mURL = new URL( in.readString() );
-		
-		if(in.dataAvail() > 0) {
-			mCookie = in.readString();
-		}
+		mCookie = in.readString();
+		mProfile = in.readParcelable(Profile.class.getClassLoader());
 	}
 	
 	/**
@@ -68,10 +69,10 @@ public class Session implements Parcelable {
 	 * 		failed, use <code>Session.getLastResponse()</code>.
 	 * @param email The email address to use as the account name
 	 * @param password The password to use for this account
-	 * @return true if the account was created, false otherwise
+	 * @return the profile of the newly created user
 	 * @throws IOException
 	 */
-	public boolean createAccount(String email, String password)
+	public Profile createAccount(String email, String password)
 	throws IOException {
 		HttpURLConnection connection = post(
 				Worddit.PATH_USER_ADD,
@@ -80,16 +81,16 @@ public class Session implements Parcelable {
 				Worddit.CLIENT_TYPE, mClientType,
 				Worddit.DEVICE_ID, mDeviceId);
 		
-		if( getLastResponse() != Worddit.SUCCESS_CREATED ) return false;
+		if( getLastResponse() != Worddit.SUCCESS_CREATED ) return null;
 		
 		// Server should have returned an auth cookie.
 		String value = HttpHelper.readCookie(connection, Worddit.AUTH_COOKIE);
 		mCookie = (value != null) ? String.format("%s=%s", Worddit.AUTH_COOKIE, value) : null;
 		
-		return true;
+		return mProfile = castJson(connection, Profile.class);
 	}
 	
-	public boolean login(String email, String password) throws IOException {
+	public Profile login(String email, String password) throws IOException {
 		HttpURLConnection connection = post(
 				Worddit.PATH_USER_LOGIN,
 				Worddit.EMAIL, email,
@@ -97,13 +98,13 @@ public class Session implements Parcelable {
 				Worddit.CLIENT_TYPE, mClientType,
 				Worddit.DEVICE_ID, mDeviceId);
 		
-		if( getLastResponse() != Worddit.SUCCESS && getLastResponse() != Worddit.SUCCESS_ACCEPTED ) return false;
+		if( getLastResponse() != Worddit.SUCCESS && getLastResponse() != Worddit.SUCCESS_ACCEPTED ) return null;
 
 		// Server should have returned an auth cookie.
 		String value = HttpHelper.readCookie(connection, Worddit.AUTH_COOKIE);
 		mCookie = (value != null) ? String.format("%s=%s", Worddit.AUTH_COOKIE, value) : null;
 		
-		return true;
+		return mProfile = castJson(connection, Profile.class);
 	}
 	
 	/**
@@ -273,6 +274,14 @@ public class Session implements Parcelable {
 	}
 	
 	/**
+	 * Returns the profile for the logged-in user.
+	 * @return profile of logged-in user or null if nonexistent
+	 */
+	public Profile getUserProfile() {
+		return mProfile;
+	}
+	
+	/**
 	 * Retrieve the last HTTP response code given by
 	 * the Worddit server on the last API call.
 	 * @return last HTTP response code
@@ -430,6 +439,7 @@ public class Session implements Parcelable {
 	public void writeToParcel(Parcel out, int flags) {
 		out.writeString(getURL());
 		out.writeString(getCookie());
+		out.writeParcelable(mProfile, 0);		
 	}
 	
 	/** Generates Session objects for the Parcelable subsystem */

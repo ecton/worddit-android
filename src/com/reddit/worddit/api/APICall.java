@@ -100,7 +100,7 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 		}
 		
 		String email = args[0], password = args[1];
-		return mSession.createAccount(email, password);
+		return mSession.createAccount(email, password) != null;
 	}
 	
 	private boolean doLogin(String args[]) throws IOException {
@@ -109,7 +109,7 @@ public class APICall extends AsyncTask<String,String,Boolean>{
 		}
 		
 		String email = args[0], password = args[1];
-		return mSession.login(email, password);
+		return mSession.login(email, password) != null;
 	}
 	
 	private boolean doSetProfile(String args[]) throws IOException {
