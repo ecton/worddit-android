@@ -10,6 +10,8 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -28,6 +30,8 @@ public class Session implements Parcelable {
 	
 	/** The default, official Worddit server */
 	public static final String API_URL = "http://api.dev.worddit.org";
+	
+	protected Cache mCache;
 	
 	/** The URL of the server we are working with */
 	private URL mURL;
@@ -52,7 +56,12 @@ public class Session implements Parcelable {
 	// Note: I assumed this won't need to be defined by client code (except possibly once)
 	
 	/** This object can't be instantiated directly. */
-	private Session() { }
+	private Session() { 
+		try {
+			mCache = Cache.makeCache();
+		} catch (IOException e) {
+		}
+	}
 	
 	/** The Session object is restorable from a Parcel 
 	 * @throws MalformedURLException */
@@ -60,6 +69,11 @@ public class Session implements Parcelable {
 		mURL = new URL( in.readString() );
 		mCookie = in.readString();
 		mProfile = in.readParcelable(Profile.class.getClassLoader());
+		
+		try {
+			mCache = Cache.makeCache();
+		} catch (IOException e) {
+		}
 	}
 	
 	/**
@@ -271,6 +285,29 @@ public class Session implements Parcelable {
 		post(String.format(Worddit.PATH_GAME_CHATSEND, id), Worddit.MESSAGE, message);
 		if(getLastResponse() != Worddit.SUCCESS) return false;
 		return true;
+	}
+	
+	public Bitmap fetchAvatar(String location) {
+		try {
+			if(mCache == null || mCache.hasAvatar(location) == false) {
+				Log.i(TAG, "GET " + location);
+				URL url = new URL(location);
+				Bitmap bm = BitmapFactory.decodeStream(url.openStream());
+				if(mCache != null) {
+					mCache.cacheAvatar(location, bm);
+				}
+				else {
+					Log.w(TAG, "Couldn't cache the avatar!");
+				}
+				return bm;
+			}
+			else {
+				return mCache.getAvatar(location);
+			}
+			
+		} catch (IOException e) {
+			return null;
+		}
 	}
 	
 	/**

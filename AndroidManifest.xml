@@ -17,5 +17,6 @@
     <activity android:name="com.reddit.worddit.ProfileActivity" />
     <activity android:name="com.reddit.worddit.EditProfileActivity" />
 </application>
-<uses-permission android:name="android.permission.INTERNET"></uses-permission>
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 </manifest> 

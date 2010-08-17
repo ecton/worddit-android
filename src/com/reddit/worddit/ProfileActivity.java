@@ -1,13 +1,8 @@
 package com.reddit.worddit;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -480,15 +475,7 @@ public class ProfileActivity extends Activity {
 				return null;
 			}
 			
-			try {
-				URL url = new URL(location[0]);
-				Bitmap bm = BitmapFactory.decodeStream(url.openStream());
-				return bm;
-			}
-			catch (MalformedURLException e) { }
-			catch (IOException e) { }
-			
-			return null;
+			return mSession.fetchAvatar(location[0]);
 		}
 
 		protected void onPostExecute(Bitmap result) {
