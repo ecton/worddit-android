@@ -1,9 +1,20 @@
 package com.reddit.worddit.api;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
+import com.reddit.worddit.api.response.Profile;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -54,6 +65,33 @@ public class Cache {
 		return avatar.isFile() && avatar.canRead() && !isOutdated(avatar);
 	}
 	
+	public boolean hasProfile(String id) {
+		String file = getProfileFilename(id);
+		File profile = new File(mProfiles, file);
+		return profile.isFile() && profile.canRead()
+			&& !isOutdated(profile) && isType(profile, Profile.class);
+	}
+	
+	/**
+	 * Returns true if we can use the friends cache to return friends.
+	 * @return true if we can use it
+	 */
+	public boolean hasFriends() {
+		List<String> ids = readFriends();
+		
+		if(ids == null)
+			return false;
+		
+		// Make sure we have each profile.
+		for(String id : ids) {
+			if(hasProfile(id) == false) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
 	/**
 	 * Returns the avatar from the cache
 	 * @param url URL to read avatar from
@@ -63,6 +101,76 @@ public class Cache {
 		String file = getAvatarFilename(url);
 		File avatar = new File(mAvatars, file);
 		return BitmapFactory.decodeFile(avatar.getAbsolutePath());
+	}
+	
+	/**
+	 * Returns the profile from the cache
+	 * @param id ID of the profile
+	 * @return cached version of the profile
+	 */
+	public Profile getProfile(String id) {
+		String file = getAvatarFilename(id);
+		File profile = new File(mProfiles, file);
+		Gson gson = new Gson();
+		try {
+			return gson.fromJson(
+					new InputStreamReader(new FileInputStream(profile)),
+					Profile.class);
+		} catch (JsonParseException e) {
+			return null;
+		} catch (FileNotFoundException e) {
+			return null;
+		}
+	}
+	
+	public Profile[] getFriends() {
+		List<String> ids = readFriends();
+		if(ids == null)
+			return null;
+		
+		Profile friends[] = new Profile[ids.size()];
+		
+		for(int i = 0; i < ids.size(); i++) {
+			String id = ids.get(i);
+			if(hasProfile(id) == false)
+				return null;
+			
+			friends[i] = getProfile(id);
+		}
+		
+		return friends;
+	}
+	
+	protected List<String> readFriends() {
+		try {
+			FileReader reader = new FileReader(mFriends);
+			BufferedReader input = new BufferedReader(reader);
+			String line;
+			ArrayList<String> ids = new ArrayList<String>();
+			
+			// Read only relevant characters from file.
+			// If there are illegal characters, forget it.
+			while((line = input.readLine()) != null) {
+				char chars[] = line.toCharArray();
+				for(char c : chars) {
+					if(Cache.FRIEND_FILE_CHARS.indexOf(c) < 0) {
+						reader.close();
+						return null;
+					}
+				}
+				
+				// Add it up!
+				ids.add(line);
+			}
+			
+			// Close our reader.
+			reader.close();
+			
+			return ids;
+		}
+		catch(IOException e) {
+			return null;
+		}
 	}
 	
 	/**
@@ -87,6 +195,47 @@ public class Cache {
 		catch(FileNotFoundException e) {
 			return false;
 		}
+	}
+	
+	public boolean cacheFriends(Profile friends[]) {
+		boolean flag = true;
+		StringBuffer buffer = new StringBuffer();
+		for(int i = 0; i < friends.length; i++) {
+			flag &= cacheProfile(friends[i]);
+			buffer.append(friends[i].id);
+			
+			if(i < friends.length - 1) {
+				buffer.append("\n");
+			}
+		}
+		
+		// Try to make the new friends list.
+		if(makeFile(mFriends,true) == false) return false;
+		return write(mFriends, buffer.toString().getBytes());
+	}
+	
+	/**
+	 * Caches the passed profiles.
+	 * @param profiles The profiles to cache.
+	 * @return true if all cached successfully
+	 */
+	public boolean cacheProfiles(Profile profiles[]) {
+		boolean flag = true;
+		for(Profile profile : profiles) {
+			flag &= cacheProfile(profile);
+		}
+		return flag;
+	}
+	
+	public boolean cacheProfile(Profile profile) {
+		File out = new File(mProfiles, getProfileFilename(profile.id));
+		
+		// Create new profile, delete if any exists.
+		makeFile(out,true);
+		
+		Gson gson = new Gson();
+		String json = gson.toJson(profile);
+		return write(out, json.getBytes());
 	}
 	
 	/**
@@ -127,6 +276,27 @@ public class Cache {
 	}
 	
 	/**
+	 * Checks if the JSON contained in f is
+	 * parseable and is of the provided type.
+	 * @param <T> type to check for
+	 * @param f file which contains Json
+	 * @param type type to check for
+	 * @return true if it is of type and not null
+	 */
+	protected <T> boolean isType(File f, Class<T> type) {
+		try {
+			FileInputStream is = new FileInputStream(f);
+			Reader r = new InputStreamReader(is);
+			Gson gson = new Gson();
+			return gson.fromJson(r, type) != null;
+		} catch (JsonParseException e) {
+			return false;
+		} catch (FileNotFoundException e) {
+			return false;
+		}
+	}
+	
+	/**
 	 * Get the "avatar filename" of a provided URL.
 	 * Created from the hash of the URL.
 	 * @param url to create a hash of.
@@ -134,6 +304,15 @@ public class Cache {
 	 */
 	protected String getAvatarFilename(String url) {
 		return String.format("%s.png", getHash(url));
+	}
+	
+	/**
+	 * Gets the "profile filename" of a provided profile id.
+	 * @param id the id of the profile
+	 * @return Filename of the profile
+	 */
+	protected String getProfileFilename(String id) {
+		return String.format("%s.json", id.toLowerCase());
 	}
 	
 	/**
@@ -161,6 +340,19 @@ public class Cache {
 		makeFile(mFriends);
 	}
 	
+	protected boolean write(File file, byte bytes[]) {
+		try {
+			FileOutputStream stream = new FileOutputStream(file);
+			stream.write(bytes);
+			return true;
+		}
+		catch(FileNotFoundException e) {
+			return false;
+		} catch (IOException e) {
+			return false;
+		}
+	}
+	
 	/**
 	 * Creates a directory if it doesn't already exist,
 	 * or deletes if that filename is not a directory.
@@ -178,10 +370,28 @@ public class Cache {
 	 * exist, or deletes it if the path specified was
 	 * a directory.
 	 * @param file The file to create.
-	 * @return true if the operation succeeded.
+	 * @return true upon success
 	 */
 	protected boolean makeFile(File file) {
-		if(file.isFile()) return true;
+		return makeFile(file,false);
+	}
+	
+	/**
+	 * Creates specified file or deletes it if the path specified was
+	 * a directory.
+	 * @param file The file to create.
+	 * @param delete Flag if we should delete an existing file
+	 * @return true if the operation succeeded.
+	 */
+	protected boolean makeFile(File file, boolean delete) {
+		if(file.isFile() && delete == true) {
+			if(file.delete() == false) return false;
+			return makeFile(file, delete);
+		}
+		else if(delete == false) {
+			return true;
+		}
+		
 		if(file.isDirectory()) {
 			if(deleteDir(file) == false) {
 				return false;
@@ -244,5 +454,8 @@ public class Cache {
 		DIR_PROFILES = "profiles";
 	
 	public static final String
-		FILE_FRIENDS = "friends.db";
+		FILE_FRIENDS = "friends.lst";
+	
+	public static final String
+		FRIEND_FILE_CHARS = "ABCDEFabcdef0123456789";
 }
