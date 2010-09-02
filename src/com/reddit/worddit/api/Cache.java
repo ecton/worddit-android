@@ -79,8 +79,9 @@ public class Cache {
 	public boolean hasFriends() {
 		List<String> ids = readFriends();
 		
-		if(ids == null)
+		if(ids == null) {
 			return false;
+		}
 		
 		// Make sure we have each profile.
 		for(String id : ids) {
@@ -109,7 +110,7 @@ public class Cache {
 	 * @return cached version of the profile
 	 */
 	public Profile getProfile(String id) {
-		String file = getAvatarFilename(id);
+		String file = getProfileFilename(id);
 		File profile = new File(mProfiles, file);
 		Gson gson = new Gson();
 		try {
@@ -117,8 +118,10 @@ public class Cache {
 					new InputStreamReader(new FileInputStream(profile)),
 					Profile.class);
 		} catch (JsonParseException e) {
+			e.printStackTrace();
 			return null;
 		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -203,10 +206,7 @@ public class Cache {
 		for(int i = 0; i < friends.length; i++) {
 			flag &= cacheProfile(friends[i]);
 			buffer.append(friends[i].id);
-			
-			if(i < friends.length - 1) {
-				buffer.append("\n");
-			}
+			buffer.append("\n");
 		}
 		
 		// Try to make the new friends list.
@@ -362,7 +362,7 @@ public class Cache {
 	protected boolean makeDirectory(File dir) {
 		if(dir.isDirectory()) return true;
 		if(dir.exists()) dir.delete();
-		return dir.mkdir();
+		return dir.mkdirs();
 	}
 	
 	/**
@@ -424,12 +424,14 @@ public class Cache {
 	}
 	
 	/**
-	 * Creates a cache using the default cache directory.
+	 * Creates a personalized cache for a particular user id.
+	 * @param id The ID of the user to whom this cache belongs.
 	 * @return the created Cache object
 	 * @throws IOException if there is a problem
 	 */
-	public static Cache makeCache() throws IOException {
-		return new Cache(new File(Environment.getExternalStorageDirectory(), DIR_WORDDIT));
+	public static Cache makeCache(String id) throws IOException {
+		File base = new File(Environment.getExternalStorageDirectory(), DIR_WORDDIT);
+		return Cache.makeCache(new File(base, id.toLowerCase()));
 	}
 	
 	/**

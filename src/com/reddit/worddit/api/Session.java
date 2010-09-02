@@ -56,12 +56,7 @@ public class Session implements Parcelable {
 	// Note: I assumed this won't need to be defined by client code (except possibly once)
 	
 	/** This object can't be instantiated directly. */
-	private Session() { 
-		try {
-			mCache = Cache.makeCache();
-		} catch (IOException e) {
-		}
-	}
+	private Session() { }
 	
 	/** The Session object is restorable from a Parcel 
 	 * @throws MalformedURLException */
@@ -71,7 +66,9 @@ public class Session implements Parcelable {
 		mProfile = in.readParcelable(Profile.class.getClassLoader());
 		
 		try {
-			mCache = Cache.makeCache();
+			if(mProfile.id != null) {
+				mCache = Cache.makeCache(mProfile.id);
+			}
 		} catch (IOException e) {
 		}
 	}
@@ -101,7 +98,14 @@ public class Session implements Parcelable {
 		String value = HttpHelper.readCookie(connection, Worddit.AUTH_COOKIE);
 		mCookie = (value != null) ? String.format("%s=%s", Worddit.AUTH_COOKIE, value) : null;
 		
-		return mProfile = castJson(connection, Profile.class);
+		mProfile = castJson(connection, Profile.class);
+		
+		makeCache(mProfile.id);
+		if(mCache != null) {
+			mCache.cacheProfile(mProfile);
+		}
+		
+		return mProfile;
 	}
 	
 	public Profile login(String email, String password) throws IOException {
@@ -118,7 +122,14 @@ public class Session implements Parcelable {
 		String value = HttpHelper.readCookie(connection, Worddit.AUTH_COOKIE);
 		mCookie = (value != null) ? String.format("%s=%s", Worddit.AUTH_COOKIE, value) : null;
 		
-		return mProfile = castJson(connection, Profile.class);
+		mProfile = castJson(connection, Profile.class);
+		
+		makeCache(mProfile.id);
+		if(mCache != null) {
+			mCache.cacheProfile(mProfile);
+		}
+		
+		return mProfile;
 	}
 	
 	/**
@@ -157,15 +168,37 @@ public class Session implements Parcelable {
 	}
 	
 	public Profile[] getFriends() throws IOException {
+		if(mCache != null && mCache.hasFriends()) {
+			Profile friends[] = mCache.getFriends();
+			return friends;
+		}
+		
 		HttpURLConnection conn = get(Worddit.PATH_USER_FRIENDS);
 		if(getLastResponse() != Worddit.SUCCESS) return null;
-		return castJson(conn,Profile[].class);
+		
+		Profile friends[] = castJson(conn,Profile[].class);
+		
+		if(mCache != null) {
+			mCache.cacheFriends(friends);
+		}
+		
+		return friends;
 	}
 	
 	public Profile findUser(String id) throws IOException {
+		if(mCache != null && mCache.hasProfile(id)) {
+			return mCache.getProfile(id);
+		}
+		
 		HttpURLConnection conn = get(String.format(Worddit.PATH_USER_FIND, id));
 		if(getLastResponse() != Worddit.SUCCESS) return null;
-		return castJson(conn, Profile.class);
+		Profile profile = castJson(conn, Profile.class);
+		
+		if(mCache != null) {
+			mCache.cacheProfile(profile);
+		}
+		
+		return profile;
 	}
 	
 	public boolean befriend(String id) throws IOException {
@@ -354,6 +387,21 @@ public class Session implements Parcelable {
 	public String getURL() {
 		Log.i(TAG, "String URL is: " + mURL.toExternalForm());
 		return mURL.toString();
+	}
+	
+	/**
+	 * Tries to make the cache.
+	 * @param id User ID for whom this cache belongs.
+	 */
+	protected void makeCache(String id) {
+		if(id == null || id.length() == 0) return;
+		
+		try {
+			mCache = Cache.makeCache(id);
+		}
+		catch(IOException e) {
+			Log.w(TAG, String.format("Couldn't make cache '%s': %s", id, e.getMessage()));
+		}
 	}
 	
 	/**
