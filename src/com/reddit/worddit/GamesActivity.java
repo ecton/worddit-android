@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
 
 import com.reddit.worddit.adapters.GameListAdapter;
 import com.reddit.worddit.api.Session;
@@ -34,6 +36,22 @@ public class GamesActivity extends ListActivity {
 		GameListAdapter adapter;
 		setListAdapter(adapter = new GameListAdapter(this, mSession));
 		adapter.repopulate();
+	}
+	
+	protected void onListItemClick(ListView list, View v, int position, long id) {
+		Game g = (Game) list.getItemAtPosition(position);
+		launchGame(g);
+	}
+	
+	protected void launchGame(Game g) {
+		launchGame(g.id);
+	}
+	
+	protected void launchGame(String id) {
+		Intent i = new Intent(GamesActivity.this, WordditActivity.class);
+		i.putExtra(Constants.EXTRA_SESSION, mSession);
+		i.putExtra(Constants.EXTRA_GAMEID, id);
+		startActivity(i);
 	}
 	
 	@Override

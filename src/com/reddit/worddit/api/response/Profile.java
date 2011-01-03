@@ -1,8 +1,5 @@
 package com.reddit.worddit.api.response;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
