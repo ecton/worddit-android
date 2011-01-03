@@ -44,13 +44,9 @@ public class GamesActivity extends ListActivity {
 	}
 	
 	protected void launchGame(Game g) {
-		launchGame(g.id);
-	}
-	
-	protected void launchGame(String id) {
 		Intent i = new Intent(GamesActivity.this, WordditActivity.class);
 		i.putExtra(Constants.EXTRA_SESSION, mSession);
-		i.putExtra(Constants.EXTRA_GAMEID, id);
+		i.putExtra(Constants.EXTRA_GAME, g);
 		startActivity(i);
 	}
 	

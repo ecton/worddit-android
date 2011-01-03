@@ -1,11 +1,14 @@
 package com.reddit.worddit.api.response;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * A class to represent a game that a player can join.
  * @author OEP
  *
  */
-public class Game {
+public class Game implements Parcelable {
 	/** ID for this game */
 	public String id;
 	
@@ -23,6 +26,19 @@ public class Game {
 	
 	/** Date of last move in UTC. */
 	public String last_move_utc;
+	
+	/**
+	 * Construct a Game from a Parcel.
+	 * @param in the parcel to construct from
+	 */
+	private Game(Parcel in) {
+		id = in.readString();
+		game_status = in.readString();
+		player_status = in.readString();
+		current_player = in.readInt();
+		players = (Player[]) in.readParcelableArray(Player.class.getClassLoader());
+		last_move_utc = in.readString();
+	}
 	
 	/**
 	 * Checks if the game is waiting for acceptance from current player
@@ -77,7 +93,7 @@ public class Game {
 	 * @author pkilgo
 	 *
 	 */
-	public static class Player {
+	public static class Player implements Parcelable {
 		public Player() { }
 		
 		/** Player ID */
@@ -85,6 +101,35 @@ public class Game {
 		
 		/** Player's score */
 		public String score;
+		
+		private Player(Parcel in) {
+			id = in.readString();
+			score = in.readString();
+		}
+
+		@Override
+		public int describeContents() {
+			return 0;
+		}
+
+		@Override
+		public void writeToParcel(Parcel dest, int flags) {
+			dest.writeString(id);
+			dest.writeString(score);
+		}
+		
+		public static final Parcelable.Creator<Player> CREATOR
+		= new Parcelable.Creator<Player>() {
+			@Override
+			public Player createFromParcel(Parcel source) {
+				return new Player(source);
+			}
+
+			@Override
+			public Player[] newArray(int size) {
+				return new Player[size];
+			}
+		};
 	}
 	
 	/** Constant values for the player's status */
@@ -98,5 +143,33 @@ public class Game {
 		STATUS_PENDING = "pending",
 		STATUS_INPROGRESS = "inprogress",
 		STATUS_COMPLETED = "completed";
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(id);
+		dest.writeString(game_status);
+		dest.writeString(player_status);
+		dest.writeInt(current_player);
+		dest.writeParcelableArray(players, flags);
+		dest.writeString(last_move_utc);
+	}
+	
+	public static final Parcelable.Creator<Game> CREATOR
+	= new Parcelable.Creator<Game>() {
+		@Override
+		public Game createFromParcel(Parcel source) {
+			return new Game(source);
+		}
+
+		@Override
+		public Game[] newArray(int size) {
+			return new Game[size];
+		}
+	};
 	
 }
