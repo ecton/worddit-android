@@ -28,6 +28,13 @@ public class Game implements Parcelable {
 	public String last_move_utc;
 	
 	/**
+	 * Default constructor
+	 */
+	public Game() {
+		
+	}
+	
+	/**
 	 * Construct a Game from a Parcel.
 	 * @param in the parcel to construct from
 	 */
@@ -36,7 +43,13 @@ public class Game implements Parcelable {
 		game_status = in.readString();
 		player_status = in.readString();
 		current_player = in.readInt();
-		players = (Player[]) in.readParcelableArray(Player.class.getClassLoader());
+		Parcelable p[] = in.readParcelableArray(Player[].class.getClassLoader());
+		players = new Player[p.length];
+		
+		for(int i = 0; i < p.length; i++) {
+			players[i] = (Player) p[i];
+		}
+		
 		last_move_utc = in.readString();
 	}
 	
@@ -94,6 +107,7 @@ public class Game implements Parcelable {
 	 *
 	 */
 	public static class Player implements Parcelable {
+		/** Default constructor */
 		public Player() { }
 		
 		/** Player ID */
