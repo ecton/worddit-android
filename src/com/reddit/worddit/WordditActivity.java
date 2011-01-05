@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 /**
  * WordditActivity is the class where most of the actual game
@@ -33,34 +34,20 @@ public class WordditActivity extends Activity {
 		Intent i = getIntent();
 		mSession = (Session) i.getParcelableExtra(Constants.EXTRA_SESSION);
 		
+		// Grab the game object
+		mGame = (Game) i.getParcelableExtra(Constants.EXTRA_GAME);
+		
 		// Set up the basic UI.
 		this.setContentView(R.layout.activity_worddit);
 		setupListeners();
 		
 		// See if we need to restore anything.
 		if(icicle == null) {
-			fetchGameInfo();
+			// TODO: Initializing step?
 		}
 		else {
 			restoreFromBundle(icicle);
 		}
-	}
-
-	private void fetchGameInfo() {
-		APICall call = new APICall(new APICallback() {
-			@Override
-			public void onCallComplete(boolean success, APICall task) {
-				if(success) {
-					mGame = (Game) task.getPayload();
-				}
-				else {
-					// TODO: Wig out to the user about it.
-					Log.w(TAG, "Didn't properly handle error while fetching game");
-				}
-			}
-		}, mSession);
-		
-		// TODO: Some initializing API Call?
 	}
 
 	private void restoreFromBundle(Bundle icicle) {
@@ -71,5 +58,19 @@ public class WordditActivity extends Activity {
 	private void setupListeners() {
 		// TODO Auto-generated method stub
 		
+		String info = String.format("Game ID: %s\nGame status: %s\nYour status: %s\n\n",
+				mGame.id,
+				mGame.game_status,
+				mGame.player_status
+			); 
+
+		
+		for(int i = 0; i < mGame.players.length; i++) {
+			info += "Player " + (i+1) + ": " + mGame.players[i].id + "\n";
+		}
+		
+		((TextView)findViewById(R.id.worddit_textview)).setText(
+			info	
+		);
 	}
 }
